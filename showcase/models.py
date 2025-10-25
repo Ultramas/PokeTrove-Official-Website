@@ -222,6 +222,12 @@ LEVEL = (
     ('F', 'Final'),
 )
 
+INVESTYPE = (
+    ('G', 'Graded'),
+    ('R', 'Raw'),
+    ('S', 'Stock'),
+)
+
 AchievementCategory = (
     ('RS', 'Rubies Spent'),
     ('TRE', 'Total Rubies Earned '),
@@ -1032,7 +1038,7 @@ class ProfileDetails(models.Model):
     avatar = models.ImageField(upload_to='profile_image', null=True, blank=True, verbose_name="Profile picture")
     alternate = models.TextField(verbose_name="Alternate text", null=True, blank=True)
     about_me = models.TextField(blank=True, null=True)
-    level = models.ForeignKey(Level, on_delete=models.CASCADE, default="")
+    level = models.ForeignKey(Level, on_delete=models.CASCADE, null=True, blank=True)
     unlocked_daily_chests = models.ManyToManyField('Game', blank=True)
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE, blank=True, null=True)
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE, blank=True, null=True)
@@ -1060,7 +1066,7 @@ class ProfileDetails(models.Model):
     trader = models.BooleanField(default=False, null=True)
     partner = models.BooleanField(default=False, null=True)
     membership = models.ForeignKey(Membership, blank=True, null=True, on_delete=models.CASCADE)
-    tier = models.ForeignKey('Tier', blank=True, null=True, on_delete=models.CASCADE, default='F')
+    tier = models.ForeignKey('Tier', blank=True, null=True, on_delete=models.CASCADE)
     favorite_chests = models.ManyToManyField('FavoriteChests', blank=True)
     position = models.UUIDField(
         default=uuid.uuid4,
@@ -1228,6 +1234,56 @@ class ProfileCurrency(models.Model):
 
     def __str__(self):
         return f"{self.profile.user}'s {self.currency.name} ({self.quantity})"
+
+
+class Investments(models.Model):
+    investment = models.IntegerField(default=1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(choices=INVESTYPE, max_length=1)
+    is_active = models.IntegerField(default=1,
+                                    blank=True,
+                                    null=True,
+                                    help_text='1->Active, 0->Inactive',
+                                    choices=((1, 'Active'), (0, 'Inactive')), verbose_name="Is this an active order?")
+
+    def __str__(self):
+        return f"{self.user}'s {self.investment}"
+
+    class Meta:
+        verbose_name = "Investment"
+
+
+class UserInvestmentFund(models.Model):
+    fund = models.IntegerField(default=1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(choices=INVESTYPE, max_length=1)
+    is_active = models.IntegerField(default=1,
+                                    blank=True,
+                                    null=True,
+                                    help_text='1->Active, 0->Inactive',
+                                    choices=((1, 'Active'), (0, 'Inactive')), verbose_name="Is this an active order?")
+
+    def __str__(self):
+        return f"{self.user}'s {self.fund}"
+
+    class Meta:
+        verbose_name = "User Investment Fund"
+
+
+class InvestmentCards(models.Model):
+    cards = models.ForeignKey('Item', on_delete=models.CASCADE)
+    type = models.CharField(choices=INVESTYPE, max_length=1)
+    is_active = models.IntegerField(default=1,
+                                    blank=True,
+                                    null=True,
+                                    help_text='1->Active, 0->Inactive',
+                                    choices=((1, 'Active'), (0, 'Inactive')), verbose_name="Is this an active order?")
+
+    def __str__(self):
+        return f"{self.user}'s {self.investment}"
+
+    class Meta:
+        verbose_name = "Investment Card"
 
 
 class IndividualChestStatistics(models.Model):
@@ -1474,6 +1530,7 @@ class Experience(models.Model):
     class Meta:
         verbose_name = "Experience"
         verbose_name_plural = "Experiences"
+
 
 class Ascension(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -6340,6 +6397,7 @@ from django.db.models.signals import pre_save
 from django.http import JsonResponse
 from django.core import serializers
 
+
 class ItemFilter(models.Model):
     product_filter = models.CharField(verbose_name="Hashtag filters", max_length=200, blank=True, null=True)
     clicks = models.IntegerField(verbose_name="Popularity", blank=True, null=True)
@@ -6512,6 +6570,7 @@ class GameHistory(models.Model):
         if not self.image:
             self.file = self.game.image
         super().save(*args, **kwargs)
+
 
 class QuickItem(models.Model):
     title = models.CharField(max_length=100, blank=True, null=True)

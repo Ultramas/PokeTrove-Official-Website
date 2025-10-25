@@ -21,7 +21,8 @@ from .models import UpdateProfile, Questionaire, PollQuestion, Choice, Frequentl
     MonstrositySprite, Affiliation, Ascension, ProfileCurrency, InventoryTradeOffer, Notification, UserNotification, \
     TopHits, Address, Robot, Bet, LevelIcon, Clickable, GameChoice, UserClickable, MyPreferences, GiftCode, \
     GiftCodeRedemption, FavoriteChests, IndividualChestStatistics, TotalChestStatistics, RubyDrop, Season, Tier, \
-    Benefits, ChangeLog, BuyCards, WeBuy, UserState, Card, CardSet, Type, Subtype, Supertype
+    Benefits, ChangeLog, BuyCards, WeBuy, UserState, Card, CardSet, Type, Subtype, Supertype, Investments, \
+    UserInvestmentFund, InvestmentCards
 from .models import Idea
 from .models import VoteQuery
 from .models import Product
@@ -1918,6 +1919,42 @@ class CardSetAdmin(admin.ModelAdmin):
 admin.site.register(Type)
 admin.site.register(Subtype)
 admin.site.register(Supertype)
+
+
+class InvestmentAdmin(admin.ModelAdmin):
+    fieldsets = (
+        ('Investment Type Information - Categorial Descriptions', {
+            'fields': ('investment', 'user', 'type', 'is_active',),
+            'classes': ('collapse-open',),
+        }),
+    )
+
+
+admin.site.register(Investments, InvestmentAdmin)
+
+
+class UserInvestmentFundAdmin(admin.ModelAdmin):
+    fieldsets = (
+        ('User Investment Information - Categorial Descriptions', {
+            'fields': ('fund', 'user', 'type', 'is_active',),
+            'classes': ('collapse-open',),
+        }),
+    )
+
+
+admin.site.register(UserInvestmentFund, UserInvestmentFundAdmin)
+
+
+class InvestmentCardsAdmin(admin.ModelAdmin):
+    fieldsets = (
+        ('User Investment Information - Categorial Descriptions', {
+            'fields': ('cards', 'type', 'is_active',),
+            'classes': ('collapse-open',),
+        }),
+    )
+
+
+admin.site.register(InvestmentCards, InvestmentCardsAdmin)
 
 
 class CurrencyAdmin(admin.ModelAdmin):

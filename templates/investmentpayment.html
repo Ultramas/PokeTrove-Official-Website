@@ -1,0 +1,770 @@
+{% include 'navtrove.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment - PokeTrove</title>
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f0ff;
+            --primary-dark: #00a0a8;
+            --secondary: #ff00e5;
+            --accent: #4ecca3;
+            --dark: #0a0a20;
+            --darker: #050510;
+            --light: #e1e1ff;
+            --success: #00ff66;
+            --error: #ff4757;
+            --warning: #ffa502;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--darker);
+            background-image:
+                radial-gradient(circle at 20% 35%, rgba(0, 240, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 75% 65%, rgba(255, 0, 229, 0.15) 0%, transparent 40%);
+        }
+
+        .payment-wrapper {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .payment-container {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .payment-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .payment-header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .payment-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .payment-body {
+            padding: 2rem;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-method {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .payment-method:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 240, 255, 0.15);
+        }
+
+        .payment-method.active {
+            border-color: var(--primary);
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .payment-method i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--gray-600);
+        }
+
+        .payment-method.active i {
+            color: var(--primary);
+        }
+
+        .payment-method span {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+
+        .payment-method.active span{
+            display: block;
+            font-weight: 600;
+            color: white !important;
+            font-size: 0.9rem;
+        }
+
+        .payment-section {
+            display: none;
+        }
+
+        .payment-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+            color: white;
+        }
+
+        .form-group .required {
+            color: var(--error);
+        }
+
+        #card-element {
+            border: 2px solid var(--gray-200);
+            padding: 1rem;
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
+            background: white;
+        }
+
+        #card-element:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.1);
+        }
+
+        #card-errors {
+            color: var(--error);
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .payment-button {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .payment-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 240, 255, 0.3);
+        }
+
+        .payment-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .payment-button .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        .payment-button.loading .spinner {
+            display: block;
+        }
+
+        .payment-button.loading .button-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--gray-200);
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            background: white;
+        }
+
+        #paypal-button-container {
+            margin-top: 1rem;
+        }
+
+        .security-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .security-info i {
+            color: var(--success);
+        }
+
+        .order-summary {
+            background: var(--gray-50);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .order-summary h3 {
+            margin: 0 0 1rem 0;
+            color: var(--gray-800);
+            font-size: 1.1rem;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: var(--gray-600);
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--gray-800);
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--gray-200);
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+
+            .payment-header {
+                padding: 1.5rem;
+            }
+
+            .payment-body {
+                padding: 1.5rem;
+            }
+
+            .payment-methods {
+                flex-direction: column;
+            }
+        }
+        .cart-item{
+            border: 1px solid #afa2a2;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 5px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-wrapper" style="margin-top: 10%;">
+        <div class="payment-container" style="">
+            <div class="payment-header">
+                <h1><i class="fas fa-lock"></i> Secure Payment</h1>
+                <p>Your payment information is encrypted and secure</p>
+            </div>
+
+            <div class="payment-body">
+
+    <ul class="cart-list">
+        <ul class="cart-inner-list" style="max-height: 200px; overflow: auto;">
+        {% for order_item in order.items.all %}
+        <li class="cart-item">
+            <div>
+                <h6 class="cart-item-title">{{ order_item.quantity }}x {{ order_item.item.title}}</h6>
+                <small class="cart-item-desc">{{ order_item.item.description}}</small>
+            </div>
+            {% if order_item.item.price is not None %}
+                <span class="cart-item-price">${{ order_item.get_final_price }}</span>
+            {% elif order_item.item.currency_price is not None %}
+                <span class="cart-item-price cart-item-currency">
+                    <span class="currency-icon">💎</span> {{ order_item.get_final_currency_price }}
+                </span>
+            {% else %}
+                <span class="cart-item-price">Price not available</span>
+            {% endif %}
+        </li>
+        {% endfor %}
+
+        {% if order.coupon %}
+        <li class="promo-item">
+            <div>
+                <h6 class="promo-title">Promo Code</h6>
+                <small class="promo-code">{{ order.coupon.code }}</small>
+            </div>
+
+            {% if order.coupon.percentDollars == False %}
+                <span class="promo-discount">-${{ order.coupon.amount }}</span>
+            {% else %}
+                <span class="promo-discount">-{{ order.coupon.amount }}%</span>
+            {% endif %}
+        </li>
+        {% endif %}
+        </ul>
+        </ul>
+                <!-- Payment Method Selection -->
+               <div class="payment-methods" role="tablist" aria-label="Payment methods">
+  <div class="payment-method active" data-method="stripe" data-target="#stripe-section" role="tab" aria-selected="true" tabindex="0">
+    <i class="fas fa-credit-card"></i>
+    <span>Credit Card</span>
+  </div>
+  <div class="payment-method" data-method="paypal" data-target="#paypal-section" role="tab" aria-selected="false" tabindex="-1">
+    <i class="fab fa-paypal"></i>
+    <span>PayPal</span>
+  </div>
+</div>
+
+<!-- Stripe Payment Section -->
+<div class="payment-section active" id="stripe-section" role="tabpanel" aria-hidden="false">
+  <script src="https://js.stripe.com/v3/"></script>
+
+    <form id="payment-form" method="post" action="{% url 'showcase:investmentpayment' %}">
+      {% csrf_token %}
+        <div class="form-group">
+          <label for="card-element">
+            Card Information <span class="required">*</span>
+          </label>
+          <div class="paymenting-container">
+        <!-- This is where Stripe injects its secure card iframe -->
+        <div id="card-element" style="border:1px solid #ddd;border-radius:4px;padding:12px;"></div>
+        <div id="card-errors" role="alert" style="color:red;margin-top:0.5rem;"></div>
+
+        <button type="submit" class="payment-button" id="submit-button">
+          <div class="spinner" style="display:none;"></div>
+          <span class="button-text">
+            <i class="fas fa-lock" style="margin-right:5px;"></i>
+            {% if order.get_total_price %}
+              Pay ${{ order.get_total_price|default:"0.00" }}
+            {% else %}
+              Pay Now
+            {% endif %}
+          </span>
+        </button>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<!-- PayPal Payment Section -->
+<div class="payment-section" id="paypal-section" role="tabpanel" aria-hidden="true">
+  <div id="paypal-button-container"></div>
+</div>
+
+
+                <div class="security-info">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Your payment is protected by 256-bit SSL encryption</span>
+                </div>
+            </div>
+        </div>
+    </div><script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Prevent double-initialization if this code runs more than once (e.g., in tabbed UIs)
+    if (window.__stripeInit) return;
+    window.__stripeInit = true;
+
+    // 1) Init Stripe + Elements
+    const stripe = Stripe("{{ STRIPE_PUBLISHABLE_KEY }}"); // from your Django context
+    const elements = stripe.elements();
+    const card = elements.create("card", {
+      hidePostalCode: false,
+      style: {
+        base: { fontSize: '16px', '::placeholder': { color: '#9aa0a6' } }
+      }
+    });
+    card.mount("#card-element"); // <-- makes the div editable / focusable
+
+    // 2) Show real-time validation
+    const cardErrors = document.getElementById('card-errors');
+    card.on('change', (event) => {
+      cardErrors.textContent = event.error ? event.error.message : '';
+    });
+
+    // 3) Handle submit: confirm the PaymentIntent
+    const form = document.getElementById('payment-form');
+    const submitBtn = document.getElementById('submit-button');
+    const spinner = submitBtn.querySelector('.spinner');
+    const buttonText = submitBtn.querySelector('.button-text');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      spinner.style.display = 'inline-block';
+      buttonText.style.opacity = 0.6;
+
+      try {
+        const clientSecret = "{{ payment_intent_client_secret }}"; // from your Django context
+
+        const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: { card }
+        });
+
+        if (error) {
+          cardErrors.textContent = error.message || "Payment failed.";
+          submitBtn.disabled = false;
+          spinner.style.display = 'none';
+          buttonText.style.opacity = 1;
+          return;
+        }
+
+        // Success: let your server verify & redirect as needed
+        form.submit();
+      } catch (err) {
+        cardErrors.textContent = "Something went wrong. Please try again.";
+        submitBtn.disabled = false;
+        spinner.style.display = 'none';
+        buttonText.style.opacity = 1;
+      }
+    });
+  });
+</script>
+
+<script>
+        const stripe = Stripe('{{ STRIPE_PUBLIC_KEY }}');
+        const elements = stripe.elements();
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        const paymentForm = document.getElementById('payment-form');
+        const submitButton = document.getElementById('submit-button');
+        const cardErrors = document.getElementById('card-errors');
+
+        paymentForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            submitButton.disabled = true;
+
+            const { token, error } = await stripe.createToken(cardElement);
+
+            if (error) {
+                cardErrors.textContent = error.message;
+                submitButton.disabled = false;
+            } else {
+                // Send the token to your server
+                const response = await fetch('/payment/stripe/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify({ token: token.id, payment_method: 'stripe' }),
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Thanks for your purchase!');
+                    window.location.href = '/';
+                } else {
+                    alert(data.error || 'Payment failed. Please try again.');
+                }
+                submitButton.disabled = false;
+            }
+        });
+
+        // PayPal Integration
+        paypal.Buttons({
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '{{ order.get_total_price }}'
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    alert('Payment completed by ' + details.payer.name.given_name);
+                    window.location.href = '/';
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
+    <script>
+        // Payment method switching
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        const paymentSections = document.querySelectorAll('.payment-section');
+
+        paymentMethods.forEach(method => {
+            method.addEventListener('click', () => {
+                // Remove active class from all methods and sections
+                paymentMethods.forEach(m => m.classList.remove('active'));
+                paymentSections.forEach(s => s.classList.remove('active'));
+
+                // Add active class to clicked method
+                method.classList.add('active');
+
+                // Show corresponding section
+                const methodType = method.dataset.method;
+                document.getElementById(`${methodType}-section`).classList.add('active');
+            });
+        });
+
+        // Stripe Integration
+        const stripe = Stripe('{{ STRIPE_PUBLIC_KEY }}');
+        const elements = stripe.elements({
+            appearance: {
+                theme: 'stripe',
+                variables: {
+                    colorPrimary: '#00f0ff',
+                    colorBackground: '#ffffff',
+                    colorText: '#374151',
+                    colorDanger: '#ff4757',
+                    fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
+                    spacingUnit: '4px',
+                    borderRadius: '8px'
+                }
+            }
+        });
+
+        const cardElement = elements.create('card', {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#374151',
+                    '::placeholder': {
+                        color: '#9ca3af',
+                    },
+                },
+            },
+        });
+        cardElement.mount('#card-element');
+
+        const paymentForm = document.getElementById('payment-form');
+        const submitButton = document.getElementById('submit-button');
+        const cardErrors = document.getElementById('card-errors');
+
+        cardElement.on('change', ({error}) => {
+            if (error) {
+                cardErrors.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error.message}`;
+            } else {
+                cardErrors.textContent = '';
+            }
+        });
+
+        paymentForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            submitButton.disabled = true;
+            submitButton.classList.add('loading');
+
+            const { token, error } = await stripe.createToken(cardElement);
+
+            if (error) {
+                cardErrors.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error.message}`;
+                submitButton.disabled = false;
+                submitButton.classList.remove('loading');
+            } else {
+                try {
+                    const response = await fetch('/payment/stripe/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                        body: JSON.stringify({
+                            token: token.id,
+                            payment_method: 'stripe'
+                        }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Success animation
+                        submitButton.innerHTML = '<i class="fas fa-check"></i> Payment Successful!';
+                        submitButton.style.background = 'var(--success)';
+
+                        setTimeout(() => {
+                            window.location.href = '/success/';
+                        }, 1500);
+                    } else {
+                        throw new Error(data.error || 'Payment failed');
+                    }
+                } catch (err) {
+                    cardErrors.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${err.message}`;
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('loading');
+                }
+            }
+        });
+
+        // PayPal Integration
+        paypal.Buttons({
+            style: {
+                layout: 'vertical',
+                color: 'blue',
+                shape: 'rect',
+                label: 'paypal',
+                height: 50
+            },
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '{{ order.get_total_price|default:"0.00" }}'
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    // Show success message
+                    const paypalContainer = document.getElementById('paypal-button-container');
+                    paypalContainer.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--success);">
+                            <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h3>Payment Successful!</h3>
+                            <p>Thank you, ${details.payer.name.given_name}!</p>
+                        </div>
+                    `;
+
+                    setTimeout(() => {
+                        window.location.href = '/success/';
+                    }, 2000);
+                });
+            },
+            onError: function (err) {
+                console.error('PayPal error:', err);
+                alert('PayPal payment failed. Please try again or use a different payment method.');
+            }
+                }).render('#paypal-button-container');
+    </script>
+    <script>
+(function () {
+  const methodEls = Array.from(document.querySelectorAll('.payment-method'));
+  const sections = {
+    stripe: document.querySelector('#stripe-section'),
+    paypal: document.querySelector('#paypal-section'),
+  };
+
+  function setAriaForTabs(activeEl) {
+    methodEls.forEach(el => {
+      const isActive = el === activeEl;
+      el.setAttribute('aria-selected', String(isActive));
+      el.setAttribute('tabindex', isActive ? '0' : '-1');
+    });
+  }
+
+  function showSection(method) {
+    Object.entries(sections).forEach(([key, section]) => {
+      const isActive = key === method;
+      section.classList.toggle('active', isActive);
+      section.setAttribute('aria-hidden', String(!isActive));
+    });
+
+    // If you need to disable Stripe submit while PayPal is active (optional):
+    const submitBtn = document.getElementById('submit-button');
+    if (submitBtn) submitBtn.disabled = (method !== 'stripe');
+  }
+
+  function activate(el) {
+    const method = el.dataset.method;
+    if (!method || !sections[method]) return;
+
+    methodEls.forEach(m => m.classList.remove('active'));
+    el.classList.add('active');
+    setAriaForTabs(el);
+    showSection(method);
+    try { localStorage.setItem('payment_method', method); } catch (_) {}
+  }
+
+  // Click + keyboard activation
+  methodEls.forEach(el => {
+    el.addEventListener('click', () => activate(el));
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        activate(el);
+      }
+    });
+  });
+
+  // Initialize from saved preference or default active element
+  const saved = (() => { try { return localStorage.getItem('payment_method'); } catch (_) { return null; }})();
+  const startEl = saved ? methodEls.find(el => el.dataset.method === saved) : document.querySelector('.payment-method.active') || methodEls[0];
+  if (startEl) activate(startEl);
+})();
+</script>
+
+</body>
+</html>

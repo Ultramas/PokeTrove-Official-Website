@@ -406,9 +406,11 @@
         <button type="submit" class="payment-button" id="submit-button">
           <div class="spinner"></div>
           <span class="button-text">
-            <i class="fas fa-lock"></i>
+            <i class="fas fa-lock" style="margin-right: 5px;"></i>
             {% if order.get_total_price %}
               Pay ${{ order.get_total_price|default:"0.00" }}
+            {% else %}
+              Pay Now
             {% endif %}
           </span>
         </button>

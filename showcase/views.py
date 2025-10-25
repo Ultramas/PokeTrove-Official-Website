@@ -38,7 +38,8 @@ from .models import UpdateProfile, EmailField, Answer, FeedbackBackgroundImage, 
     SpinnerChoiceRenders, DefaultAvatar, Achievements, QuickItem, SpinPreference, Battle, \
     BattleParticipant, Monstrosity, MonstrositySprite, Product, Level, BattleGame, Notification, InventoryTradeOffer, \
     UserNotification, TopHits, Card, Clickable, GameChoice, Robot, MyPreferences, UserClickable, GiftCodeRedemption, \
-    GiftCode, IndividualChestStatistics, FavoriteChests, Season, Tier, ChangeLog, FavoriteCurrency, UserState
+    GiftCode, IndividualChestStatistics, FavoriteChests, Season, Tier, ChangeLog, FavoriteCurrency, UserState, \
+    Investments, UserInvestmentFund
 from .models import Idea
 from .models import VoteQuery
 from .models import StaffApplication
@@ -126,7 +127,8 @@ from .models import Ascension
 from .models import (Item, OrderItem, Order, Address, Payment, Coupon, Refund,
                      UserProfile)
 
-from .forms import CouponForm, RefundForm, PaymentForm, CurrencyViewTypeForm, WeBuyForm, BuyCardsForm, BuyCardsFormSet
+from .forms import CouponForm, RefundForm, PaymentForm, CurrencyViewTypeForm, WeBuyForm, BuyCardsForm, BuyCardsFormSet, \
+    InvestmentForm
 
 from .forms import VoteQueryForm, EmailForm, AnswerForm, ItemForm, TradeItemForm, TradeProposalForm, \
     SellerApplicationForm, \
@@ -7880,7 +7882,7 @@ class BlogBaseView(ListView):
 
         return context
 
-
+@login_required
 def ajax_update_amount(request):
     profile = request.user.profiledetails
     rd_benefit = profile.tier.benefits \
@@ -7891,6 +7893,216 @@ def ajax_update_amount(request):
     return JsonResponse({
         'rd_multiplier': rd_multiplier,
     })
+
+
+class InvestmentView(FormMixin, ListView):
+    model = Investments
+    form_class = InvestmentForm
+    template_name = 'investments.html'
+    success_url = reverse_lazy('showcase:investmentpayment')
+
+    def post(self, request, *args, **kwargs):
+        form = InvestmentForm(request.POST)
+        if form.is_valid():
+            investment = form.save(commit=False)
+            investment.user = request.user
+            investment = form.save(commit=False)
+            investment.user = request.user
+            investment.save()
+
+            UserInvestmentFund.objects.create(
+                user=request.user,
+                fund=investment.investment,  # pull the number from form/model
+                type=investment.type,
+                is_active=1
+            )
+
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+
+        return render(request, 'investments.html', {'form': form})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['Header'] = NavBarHeader.objects.filter(is_active=1).order_by("row")
+        context['DropDown'] = NavBar.objects.filter(is_active=1).order_by('position')
+
+        if self.request.user.is_authenticated:
+            context['StockObject'] = InventoryObject.objects.filter(
+                is_active=1, user=self.request.user
+            ).order_by("created_at")
+            context['preferenceform'] = MyPreferencesForm(user=self.request.user)
+        context['FeaturedNavigation'] = FeaturedNavigationBar.objects.filter(is_active=1).order_by("position")
+        context['Logo'] = LogoBase.objects.filter(Q(page=self.template_name) | Q(page='navtrove.html'),
+                                                  is_active=1)
+
+        context['Favicon'] = FaviconBase.objects.filter(is_active=1)
+        context['preferenceform'] = MyPreferencesForm(user=self.request.user)
+
+        print("navtrove here")
+        for logo in context['Logo']:
+            print("the logo is " + logo.title)
+
+        user = self.request.user
+        if user.is_authenticated:
+            user_clickables = UserClickable.objects.filter(user=user)
+            for user_clickable in user_clickables:
+                if user_clickable.clickable.chance_per_second > 0:
+                    user_clickable.precomputed_chance = 1000 / user_clickable.clickable.chance_per_second
+                    print('chance exists' + str(user_clickable.precomputed_chance))
+                else:
+                    user_clickable.precomputed_chance = 0
+
+            context["Clickables"] = user_clickables
+            context['Profile'] = ProfileDetails.objects.filter(is_active=1, user=user)
+            profile = ProfileDetails.objects.filter(user=user).first()
+            if profile:
+                context['profile_pk'] = profile.pk
+                context['profile_url'] = reverse('showcase:profile', kwargs={'pk': profile.pk})
+        if self.request.user.is_authenticated:
+            userprofile = ProfileDetails.objects.filter(is_active=1, user=self.request.user)
+        else:
+            userprofile = None
+
+        if userprofile:
+            context['NewsProfiles'] = userprofile
+        else:
+            context['NewsProfiles'] = None
+
+        if context['NewsProfiles'] is None:
+
+            userprofile = type('', (), {})()
+            userprofile.newprofile_profile_picture_url = 'static/css/images/a.jpg'
+            userprofile.newprofile_profile_url = None
+        else:
+            for userprofile in context['NewsProfiles']:
+                user = userprofile.user
+                profile = ProfileDetails.objects.filter(user=user).first()
+                if profile:
+                    userprofile.newprofile_profile_picture_url = profile.avatar.url
+                    userprofile.newprofile_profile_url = userprofile.get_profile_url()
+
+                    clickables = Clickable.objects.filter(is_active=1)
+
+                    user_clickables = UserClickable.objects.filter(user=user, clickable__in=clickables)
+
+                    context['Clickables'] = user_clickables
+
+        if self.request.user.is_authenticated:
+            profile = (
+                ProfileDetails.objects
+                .filter(user=self.request.user, is_active=1)
+                .select_related('tier')
+                .first()
+            )
+        else:
+            profile = None
+        context['profiledetails'] = profile
+        context['user_tier_code'] = (
+            profile.tier.tier if profile and profile.tier else ''
+        )
+        return context
+
+
+class InvestmentPaymentView(FormMixin, ListView):
+    model = Investments
+    form_class = PaymentForm
+    template_name = 'investmentpayment.html'
+    success_url = reverse_lazy('showcase:investmentpayment')
+
+    def post(self, request, *args, **kwargs):
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            investment = form.save(commit=False)
+            investment.user = request.user
+            investment.save()
+            return JsonResponse({"status": "success", "message": "Investment Obtained!"})
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+
+        return render(request, 'investmentpayment.html', {'form': form})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['Header'] = NavBarHeader.objects.filter(is_active=1).order_by("row")
+        context['DropDown'] = NavBar.objects.filter(is_active=1).order_by('position')
+
+        if self.request.user.is_authenticated:
+            context['StockObject'] = InventoryObject.objects.filter(
+                is_active=1, user=self.request.user
+            ).order_by("created_at")
+            context['preferenceform'] = MyPreferencesForm(user=self.request.user)
+        context['FeaturedNavigation'] = FeaturedNavigationBar.objects.filter(is_active=1).order_by("position")
+        context['Logo'] = LogoBase.objects.filter(Q(page=self.template_name) | Q(page='navtrove.html'),
+                                                  is_active=1)
+
+        context['Favicon'] = FaviconBase.objects.filter(is_active=1)
+        context['preferenceform'] = MyPreferencesForm(user=self.request.user)
+
+        print("navtrove here")
+        for logo in context['Logo']:
+            print("the logo is " + logo.title)
+
+        user = self.request.user
+        if user.is_authenticated:
+            user_clickables = UserClickable.objects.filter(user=user)
+            for user_clickable in user_clickables:
+                if user_clickable.clickable.chance_per_second > 0:
+                    user_clickable.precomputed_chance = 1000 / user_clickable.clickable.chance_per_second
+                    print('chance exists' + str(user_clickable.precomputed_chance))
+                else:
+                    user_clickable.precomputed_chance = 0
+
+            context["Clickables"] = user_clickables
+            context['Profile'] = ProfileDetails.objects.filter(is_active=1, user=user)
+            profile = ProfileDetails.objects.filter(user=user).first()
+            if profile:
+                context['profile_pk'] = profile.pk
+                context['profile_url'] = reverse('showcase:profile', kwargs={'pk': profile.pk})
+        if self.request.user.is_authenticated:
+            userprofile = ProfileDetails.objects.filter(is_active=1, user=self.request.user)
+        else:
+            userprofile = None
+
+        if userprofile:
+            context['NewsProfiles'] = userprofile
+        else:
+            context['NewsProfiles'] = None
+
+        if context['NewsProfiles'] is None:
+
+            userprofile = type('', (), {})()
+            userprofile.newprofile_profile_picture_url = 'static/css/images/a.jpg'
+            userprofile.newprofile_profile_url = None
+        else:
+            for userprofile in context['NewsProfiles']:
+                user = userprofile.user
+                profile = ProfileDetails.objects.filter(user=user).first()
+                if profile:
+                    userprofile.newprofile_profile_picture_url = profile.avatar.url
+                    userprofile.newprofile_profile_url = userprofile.get_profile_url()
+
+                    clickables = Clickable.objects.filter(is_active=1)
+
+                    user_clickables = UserClickable.objects.filter(user=user, clickable__in=clickables)
+
+                    context['Clickables'] = user_clickables
+
+        if self.request.user.is_authenticated:
+            profile = (
+                ProfileDetails.objects
+                .filter(user=self.request.user, is_active=1)
+                .select_related('tier')
+                .first()
+            )
+        else:
+            profile = None
+        context['profiledetails'] = profile
+        context['user_tier_code'] = (
+            profile.tier.tier if profile and profile.tier else ''
+        )
+        return context
 
 
 class NavView(ListView):
@@ -7937,7 +8149,7 @@ class NavView(ListView):
                 context['preferenceform'] = MyPreferencesForm(user=user)
                 context['preference_instance'] = None
         context['Favicon'] = FaviconBase.objects.filter(is_active=1)
-        context['form'] = MyPreferencesForm(user=self.request.user)
+        context['preferenceform'] = MyPreferencesForm(user=self.request.user)
 
         print("navtrove here")
         for logo in context['Logo']:

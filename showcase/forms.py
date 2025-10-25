@@ -17,7 +17,7 @@ from .models import Idea, OrderItem, EmailField, Item, Questionaire, StoreViewTy
     Trade_In_Cards, DegeneratePlaylistLibrary, DegeneratePlaylist, Choice, CATEGORY_CHOICES, CONDITION_CHOICES, \
     SPECIAL_CHOICES, QuickItem, SpinPreference, TradeItem, PrizePool, BattleParticipant, BattleGame, Monstrosity, \
     MonstrositySprite, Ascension, InventoryTradeOffer, VoteOption, Bet, GameChoice, MyPreferences, GiftCode, \
-    GiftCodeRedemption, WeBuy, BuyCards
+    GiftCodeRedemption, WeBuy, BuyCards, Investments, UserInvestmentFund
 from .models import UpdateProfile
 from .models import VoteQuery
 from .models import StaffApplication
@@ -831,6 +831,7 @@ PAYMENT_CHOICES = (
     ('C', 'Card')
 )
 
+
 class CheckoutForm(forms.Form):
     shipping_address = forms.CharField(required=False)
     shipping_address2 = forms.CharField(required=False)
@@ -860,6 +861,7 @@ class CheckoutForm(forms.Form):
         if all_items_currency_based:
             self.fields['payment_option'].required = False
             self.fields['payment_option'].widget = forms.HiddenInput()
+
 
 class CouponForm(forms.Form):
     code = forms.CharField(widget=forms.TextInput(attrs={
@@ -1877,6 +1879,26 @@ class FeedForm(forms.ModelForm):
     class Meta:
         model = Feedback
         fields = ('order', 'star_rating', 'comment', 'slug', 'image')
+
+
+class InvestmentForm(forms.ModelForm):
+    class Meta:
+        model = Investments
+        fields = ['investment', 'type']
+        widgets = {
+            'type': forms.Select(attrs={'class': 'form-select'}),
+            'investment': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+
+class UserInvestmentFundForm(forms.ModelForm):
+    class Meta:
+        model = UserInvestmentFund
+        fields = ['fund', 'user', 'type']
+        widgets = {
+            'type': forms.Select(attrs={'class': 'form-select'}),
+            'investment': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
 
 
 class EmailForm(forms.ModelForm):

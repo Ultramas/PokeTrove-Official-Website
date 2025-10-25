@@ -112,9 +112,6 @@ def set_notifications_off(sender, request, user, **kwargs):
 
 @receiver(post_save, sender=User)
 def create_user_settings(sender, instance, created, **kwargs):
-    """
-    Signal to create a SettingsModel instance when a new user is created.
-    """
     if created:
         SettingsModel.objects.create(
             user=instance,
