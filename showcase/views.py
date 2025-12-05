@@ -21,6 +21,7 @@ from django.templatetags.static import static
 from django.utils.html import strip_tags
 from django.views.generic import ListView
 import stripe
+from django.views.generic.base import ContextMixin
 from social_core.backends.stripe import StripeOAuth2
 from django.utils.text import slugify
 from urllib.parse import quote, urlparse
@@ -9620,9 +9621,9 @@ class TradeItemCreateView(ListView):
                 is_active=1, user=self.request.user
             ).order_by("created_at")
             context['preferenceform'] = MyPreferencesForm(user=self.request.user)
+            context['Friends'] = Friend.objects.filter(user=self.request.user, is_active=1)
         context['TradeItems'] = TradeItem.objects.filter(is_active=1)
         context['TradeOffers'] = TradeOffer.objects.filter(is_active=1)
-        context['Friends'] = Friend.objects.filter(user=self.request.user, is_active=1)
         tradeoffering = RespondingTradeOffer.objects.filter(is_active=1)
         context['TextFielde'] = TextBase.objects.filter(is_active=1, page=self.template_name).order_by("section")
 
@@ -9738,8 +9739,9 @@ class TradeOfferCreateView(CreateView):
     def get_context_data(self, **kwargs):
         self.object_list = self.get_queryset()
         context = super().get_context_data(**kwargs)
-        form = TradeProposalForm(self.request.POST or None, user=self.request.user)
-        context['form'] = form
+        if self.request.user.is_authenticated:
+            form = TradeProposalForm(self.request.POST or None, user=self.request.user)
+            context['form'] = form
         context['Background'] = BackgroundImageBase.objects.filter(
             is_active=1, page=self.template_name).order_by("position")
         context['BaseCopyrightTextFielded'] = BaseCopyrightTextField.objects.filter(is_active=1)
@@ -9795,56 +9797,60 @@ class ResponseTradeOfferCreateView(CreateView):
     form_class = RespondingTradeOfferForm
     template_name = 'responsetradeitems.html'
     success_url = '/directedtradeoffers/'
+    base_offer = None
+
+    def dispatch(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        self.base_offer = get_object_or_404(TradeOffer, slug=slug)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
-    def get_form_instance(self):
-        form = self.form_class(self.request.POST or None, user=self.request.user)
-        form.fields['offered_trade_items'].queryset = TradeItem.objects.filter(user=self.request.user)
-        return form
-
-    def post(self, request, *args, **kwargs):
-        if request.method == 'POST':
-            form = self.get_form_instance()
-            if form.is_valid():
-                trade_request = form.save(commit=False)
-                trade_request.user = request.user
-
-                try:
-                    trade_request.save()
-                    trade_request.user2 = trade_request.wanted_trade_items.user
-                    trade_request.save()
-                    messages.success(request, "Trade offer submitted successfully.")
-                    return redirect('showcase:directedtradeoffers')
-
-                except IntegrityError as e:
-                    if 'UNIQUE constraint failed: showcase_respondingtradeoffer.slug' in str(e):
-                        messages.warning(request, "You have already submitted a trade offer for this item.")
-                        return redirect('showcase:directedtradeoffers')
-
-        context = {'form': self.get_form_instance()}
-        return render(request, self.template_name, context)
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user  # Dealer
+        self.object.save()
+        form.save_m2m()
+        messages.success(self.request, "Trade offer submitted successfully.")
+        return redirect('showcase:directedtradeoffers')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = self.get_form_instance()
+
+        if 'form' not in context:
+            context['form'] = RespondingTradeOfferForm(
+                user=self.request.user,
+                initial={'wanted_trade_items': self.base_offer},
+            )
+
+        context['trade_offers'] = TradeOffer.objects.filter(
+            is_active=1,
+            user=self.base_offer.user
+        )
+
+        context['base_offer'] = self.base_offer
         context['Background'] = BackgroundImageBase.objects.filter(
-            is_active=1, page=self.template_name).order_by("position")
+            is_active=1, page=self.template_name
+        ).order_by("position")
         context['BaseCopyrightTextFielded'] = BaseCopyrightTextField.objects.filter(is_active=1)
-        context['Titles'] = Titled.objects.filter(is_active=1, page=self.template_name).order_by("position")
+        context['Titles'] = Titled.objects.filter(
+            is_active=1, page=self.template_name
+        ).order_by("position")
         context['Header'] = NavBarHeader.objects.filter(is_active=1).order_by("row")
         context['DropDown'] = NavBar.objects.filter(is_active=1).order_by('position')
-        context['Logo'] = LogoBase.objects.filter(Q(page=self.template_name) | Q(page='navtrove.html'), is_active=1)
+        context['Logo'] = LogoBase.objects.filter(
+            Q(page=self.template_name) | Q(page='navtrove.html'),
+            is_active=1
+        )
 
         if self.request.user.is_authenticated:
             context['StockObject'] = InventoryObject.objects.filter(
                 is_active=1, user=self.request.user
             ).order_by("created_at")
             context['preferenceform'] = MyPreferencesForm(user=self.request.user)
-        context['TradeOffer'] = TradeOffer.objects.filter(is_active=1)
 
         if self.request.user.is_authenticated:
             userprofile = ProfileDetails.objects.filter(is_active=1, user=self.request.user)
@@ -9853,23 +9859,22 @@ class ResponseTradeOfferCreateView(CreateView):
 
         if userprofile:
             context['NewsProfiles'] = userprofile
-        else:
-            context['NewsProfiles'] = None
-
-        if context['NewsProfiles'] == None:
-
-            userprofile = type('', (), {})()
-            userprofile.newprofile_profile_picture_url = 'static/css/images/a.jpg'
-            userprofile.newprofile_profile_url = None
-        else:
-            for userprofile in context['NewsProfiles']:
-                user = userprofile.user
+            for up in context['NewsProfiles']:
+                user = up.user
                 profile = ProfileDetails.objects.filter(user=user).first()
                 if profile:
-                    userprofile.newprofile_profile_picture_url = profile.avatar.url
-                    userprofile.newprofile_profile_url = userprofile.get_profile_url()
+                    up.newprofile_profile_picture_url = profile.avatar.url
+                    up.newprofile_profile_url = up.get_profile_url()
+        else:
+            context['NewsProfiles'] = None
+            dummy = type('', (), {})()
+            dummy.newprofile_profile_picture_url = 'static/css/images/a.jpg'
+            dummy.newprofile_profile_url = None
+            context['DummyNewsProfile'] = dummy
 
         return context
+
+
 
 
 @login_required
@@ -10609,6 +10614,7 @@ class PatreonBackgroundView(ListView):
         }
         return render(request, 'blog_comment.html', context)"""
 
+
 from django.views.generic import ListView, CreateView
 
 
@@ -11335,6 +11341,7 @@ class BackgroundView(FormMixin, BaseView):
                 currencyobject.title = item.name
                 currencyobject.price = item.price
                 currencyobject.discount_price = item.discount_price
+                currencyobject.display_price = item.effective_price
                 currencyobject.image_url = item.file.url
                 currencyobject.label = item.label
                 currencyobject.hyperlink = item.get_profile_url()
@@ -17116,69 +17123,138 @@ class TradeOffersView(View):
         return render(request, 'pendingtrades.html', context)
 
 
-from django.http import JsonResponse
-
-
 @method_decorator(login_required, name='dispatch')
-class DirectedTradeOfferView(View):
+class DirectedTradeOfferView(ContextMixin, View):
     template_name = 'directedtradeoffers.html'
 
     def is_ajax(self, request):
         return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
     def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
 
-        pending_requests = TradeOffer.objects.filter(user2=request.user, trade_status=TradeOffer.PENDING)
-        outgoing_requests = TradeOffer.objects.filter(user=request.user, trade_status=TradeOffer.PENDING)
+        pending_requests = TradeOffer.objects.filter(
+            user2=request.user,
+            trade_status=TradeOffer.PENDING
+        )
+        outgoing_requests = TradeOffer.objects.filter(
+            user=request.user,
+            trade_status=TradeOffer.PENDING
+        )
+        response_pending_requests = RespondingTradeOffer.objects.filter(
+            user2=request.user,
+            trade_status=RespondingTradeOffer.PENDING
+        )
+        response_outgoing_requests = RespondingTradeOffer.objects.filter(
+            user=request.user,
+            trade_status=RespondingTradeOffer.PENDING
+        )
 
-        response_pending_requests = RespondingTradeOffer.objects.filter(user2=request.user,
-                                                                        trade_status=RespondingTradeOffer.PENDING)
-        response_outgoing_requests = RespondingTradeOffer.objects.filter(user=request.user,
-                                                                         trade_status=RespondingTradeOffer.PENDING)
-
-        context = {}
         context.update({
             'pending_requests': pending_requests,
             'outgoing_requests': outgoing_requests,
             'response_pending_requests': response_pending_requests,
-            'response_outgoing_requests': response_outgoing_requests
+            'response_outgoing_requests': response_outgoing_requests,
         })
+
+        context['request'] = request
+        current_user = request.user
+
+        # Profiles from TradeOffer
+        profiles_qs = TradeOffer.objects.filter(user=current_user.id, is_active=1)
+        context['Profiles'] = profiles_qs
+
+        for trade in context['Profiles']:
+            user = trade.user
+            profile = ProfileDetails.objects.filter(user=user).first()
+            if profile:
+                trade.newprofile_profile_picture_url = profile.avatar.url
+                trade.newprofile_profile_url = trade.get_profile_url()
+
+        # Response trades (created by current user)
+        responsetradeoffers = RespondingTradeOffer.objects.filter(user=request.user, is_active=1)
+        context['ResponseTrade'] = responsetradeoffers
+
+        for responsetradeoffer in context['ResponseTrade']:
+            user = responsetradeoffer.user
+            if user:
+                responsetradeoffer.responsetradeoffer_trade_url = responsetradeoffer.get_profile_url2()
+
+        # 🔹 Attach avatar for wanted_trade_items.user on ALL response objects 🔹
+        # 1) response_pending_requests
+        for rto in response_pending_requests:
+            wanted_offer = rto.wanted_trade_items  # FK to TradeOffer or None
+            if wanted_offer and wanted_offer.user:
+                profile = ProfileDetails.objects.filter(user=wanted_offer.user).first()
+                if profile and profile.avatar:
+                    # this becomes available in the template as rto.wanted_user_avatar_url
+                    rto.wanted_user_avatar_url = profile.avatar.url
+
+        # 2) response_outgoing_requests
+        for rto in response_outgoing_requests:
+            wanted_offer = rto.wanted_trade_items
+            if wanted_offer and wanted_offer.user:
+                profile = ProfileDetails.objects.filter(user=wanted_offer.user).first()
+                if profile and profile.avatar:
+                    rto.wanted_user_avatar_url = profile.avatar.url
+
+        # 3) ResponseTrade list (responsetradeoffers)
+        for rto in context['ResponseTrade']:
+            wanted_offer = rto.wanted_trade_items
+            if wanted_offer and wanted_offer.user:
+                profile = ProfileDetails.objects.filter(user=wanted_offer.user).first()
+                if profile and profile.avatar:
+                    rto.wanted_user_avatar_url = profile.avatar.url
+
+        return render(request, self.template_name, context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['Background'] = BackgroundImageBase.objects.filter(
+            is_active=1, page=self.template_name
+        ).order_by("position")
+        context['BaseCopyrightTextFielded'] = BaseCopyrightTextField.objects.filter(is_active=1)
+        context['Titles'] = Titled.objects.filter(
+            is_active=1, page=self.template_name
+        ).order_by("position")
+
         context['Header'] = NavBarHeader.objects.filter(is_active=1).order_by("row")
         context['DropDown'] = NavBar.objects.filter(is_active=1).order_by('position')
-        context['Logo'] = LogoBase.objects.filter(Q(page=self.template_name) | Q(page='navtrove.html'), is_active=1)
+        context['Logo'] = LogoBase.objects.filter(
+            Q(page=self.template_name) | Q(page='navtrove.html'),
+            is_active=1
+        )
 
         if self.request.user.is_authenticated:
             context['StockObject'] = InventoryObject.objects.filter(
                 is_active=1, user=self.request.user
             ).order_by("created_at")
             context['preferenceform'] = MyPreferencesForm(user=self.request.user)
-        context['request'] = request
-        current_user = request.user
+        context['TradeOffer'] = TradeOffer.objects.filter(is_active=1)
 
-        newprofile = TradeOffer.objects.filter(user=current_user.id, is_active=1)
+        # User profile / NewsProfiles
+        if self.request.user.is_authenticated:
+            userprofile_qs = ProfileDetails.objects.filter(is_active=1, user=self.request.user)
+        else:
+            userprofile_qs = None
 
-        context['Profiles'] = newprofile
+        if userprofile_qs:
+            context['NewsProfiles'] = userprofile_qs
+            for userprofile in context['NewsProfiles']:
+                user = userprofile.user
+                profile = ProfileDetails.objects.filter(user=user).first()
+                if profile:
+                    userprofile.newprofile_profile_picture_url = profile.avatar.url
+                    userprofile.newprofile_profile_url = userprofile.get_profile_url()
+        else:
+            context['NewsProfiles'] = None
+            dummy = type('', (), {})()
+            dummy.newprofile_profile_picture_url = 'static/css/images/a.jpg'
+            dummy.newprofile_profile_url = None
+            context['DummyNewsProfile'] = dummy
 
-        for newprofile in context['Profiles']:
-            user = newprofile.user
-            profile = ProfileDetails.objects.filter(user=user).first()
-            if profile:
-                newprofile.newprofile_profile_picture_url = profile.avatar.url
-                newprofile.newprofile_profile_url = newprofile.get_profile_url()
-
-        responsetradeoffers = RespondingTradeOffer.objects.filter(user=self.request.user, is_active=1)
-        context['ResponseTrade'] = responsetradeoffers
-        for responsetradeoffer in context['ResponseTrade']:
-            user = responsetradeoffer.user
-            if user:
-                responsetradeoffer.responsetradeoffer_trade_url = responsetradeoffer.get_profile_url2()
-
-        if self.is_ajax(request):
-            context.update({'pending_requests': pending_requests, 'outgoing_requests': outgoing_requests})
-            return render(request, 'directedtradeoffers.html', context)
-
-        context.update({'pending_requests': pending_requests, 'outgoing_requests': outgoing_requests})
-        return render(request, 'directedtradeoffers.html', context)
+        return context
 
 
 @login_required

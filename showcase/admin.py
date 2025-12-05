@@ -639,8 +639,7 @@ class RespondingTradeOfferAdmin(admin.ModelAdmin):
         }),
     )
     readonly_fields = ('slug', 'timestamp',)
-    list_display = ('wanted_trade_items', 'slug', 'timestamp', 'trade_status')
-
+    list_display = ('slug', 'timestamp', 'trade_status')
 
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)

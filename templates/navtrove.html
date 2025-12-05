@@ -21,9 +21,7 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>    /* ===== UNIFIED DESIGN SYSTEM ===== */
-        .logo {
+    <style>        .logo {
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -248,214 +246,6 @@
             color: var(--accent);
         }
 
-    :root {
-        /* Primary Colors */
-        --primary: #00e5ff;
-        --primary-dark: #00b8d4;
-        --primary-light: #18ffff;
-        --primary-glow: rgba(0, 229, 255, 0.5);
-
-        /* Secondary Colors */
-        --secondary: #ff0055;
-        --secondary-dark: #c6004e;
-        --secondary-light: #ff4081;
-
-        /* Accent Colors */
-        --accent: #7c4dff;
-        --accent-dark: #651fff;
-        --accent-light: #b388ff;
-
-        /* Background Colors */
-        --bg-dark: #0a0e17;
-        --bg-darker: #050a14;
-        --bg-card: rgba(16, 23, 41, 0.85);
-        --bg-card-hover: rgba(20, 29, 49, 0.9);
-        --bg-glass: rgba(255, 255, 255, 0.05);
-
-        /* Text Colors */
-        --text-primary: #ffffff;
-        --text-secondary: rgba(255, 255, 255, 0.8);
-        --text-disabled: rgba(255, 255, 255, 0.5);
-        --text-hint: rgba(255, 255, 255, 0.3);
-
-        /* Status Colors */
-        --success: #00e676;
-        --warning: #ffea00;
-        --error: #ff1744;
-        --info: #2979ff;
-
-        /* Card Rarity Colors */
-        --gold: #ffd700;
-        --platinum: #e5e4e2;
-        --emerald: #50c878;
-        --diamond: #b9f2ff;
-
-        /* Border & Shadow */
-        --border-light: rgba(255, 255, 255, 0.1);
-        --border-medium: rgba(255, 255, 255, 0.2);
-        --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
-        --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.4);
-        --shadow-hard: 0 12px 40px rgba(0, 0, 0, 0.5);
-        --shadow-glow: 0 0 20px var(--primary-glow);
-
-        /* Transitions */
-        --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        --transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-
-        /* Spacing */
-        --spacing-xs: 0.5rem;
-        --spacing-sm: 0.3rem;
-        --spacing-md: 1.5rem;
-        --spacing-lg: 2rem;
-        --spacing-xl: 3rem;
-
-        /* Border Radius */
-        --radius-sm: 8px;
-        --radius-md: 12px;
-        --radius-lg: 16px;
-        --radius-xl: 24px;
-    }
-
-    /* ===== GLOBAL STYLES ===== */
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: "Rajdhani", sans-serif;
-        background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
-        color: var(--text-primary);
-        min-height: 100vh;
-        overflow-x: hidden;
-        line-height: 1.6;
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(45deg, var(--primary-dark), var(--primary));
-        border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(45deg, var(--primary), var(--primary-light));
-    }
-
-    /* ===== UNIFIED CARD SYSTEM ===== */
-
-    .unified-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-light);
-        border-radius: var(--radius-lg);
-        backdrop-filter: blur(20px);
-        box-shadow: var(--shadow-medium);
-        transition: all var(--transition-medium);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .unified-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(45deg,
-            transparent 0%,
-            rgba(255, 255, 255, 0.05) 50%,
-            transparent 100%);
-        opacity: 0;
-        transition: opacity var(--transition-medium);
-        pointer-events: none;
-    }
-
-    .unified-card:hover {
-        transform: translateY(-8px);
-        box-shadow: var(--shadow-hard), var(--shadow-glow);
-        border-color: var(--primary);
-    }
-
-    .unified-card:hover::before {
-        opacity: 1;
-    }
-
-    /* ===== UNIFIED BUTTON SYSTEM ===== */
-
-    .btn-unified {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: var(--spacing-xs);
-        padding: var(--spacing-sm) var(--spacing-md);
-        border: none;
-        border-radius: var(--radius-md);
-        font-family: inherit;
-        font-weight: 600;
-        text-decoration: none;
-        cursor: pointer;
-        transition: all var(--transition-medium);
-        position: relative;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-
-    .btn-unified::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg,
-            transparent,
-            rgba(255, 255, 255, 0.2),
-            transparent);
-        transition: left var(--transition-slow);
-    }
-
-    .btn-unified:hover::before {
-        left: 100%;
-    }
-
-    .btn-primary {
-        background: linear-gradient(45deg, var(--primary-dark), var(--primary));
-        color: var(--bg-dark);
-        box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 229, 255, 0.4);
-    }
-
-    .btn-secondary {
-        background: var(--bg-glass);
-        color: var(--text-primary);
-        border: 1px solid var(--border-medium);
-    }
-
-    .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: var(--primary);
-        color: var(--primary);
-    }
-
-
-
         :root {
             --background: #0a0a13;
             --foreground: #e0e0e0;
@@ -515,6 +305,8 @@
             border: double 4px transparent;
             margin-bottom: -30px;
             background: rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            position: sticky;
         }
 
         #containerteed-stars {
@@ -801,19 +593,17 @@
             left: calc(var(--sidebar-collapsed-width) - 60px);
         }
 
-
-    .user-profile {
-        position: relative;
-        margin-bottom: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: linear-gradient(135deg, rgba(191, 151, 255, 0.1), rgba(10, 10, 19, 0.9));
-        border-bottom: 1px solid rgba(191, 151, 255, 0.2);
-        overflow: hidden;
-        padding-bottom: 0px;
-        height: 30%;
-    }
+        .user-profile {
+            position: relative;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(191, 151, 255, 0.1), rgba(10, 10, 19, 0.9));
+            border-bottom: 1px solid rgba(191, 151, 255, 0.2);
+            overflow: hidden;
+            padding-bottom: 0px;
+        }
 
         .user-profile::before {
             content: '';
@@ -846,9 +636,6 @@
             background: var(--border-gradient);
             padding: 2px;
             transition: all 0.3s ease;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 25px;
         }
 
         .profile-picture:hover {
@@ -1133,19 +920,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            background: linear-gradient(45deg, rgba(191, 151, 255, 0.2), rgba(191, 151, 255, 0.1));
-            border: 2px solid var(--primary);
-            color: var(--text);
-            padding: 1rem;
-            border-radius: 8px;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(191, 151, 255, 0.2), rgba(10, 10, 19, 0.8));
+            color: var(--foreground);
+            padding: 12px;
+            border-radius: 10px;
             width: 100%;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Cinzel', serif;
+            border: 1px solid rgba(191, 151, 255, 0.3);
+            font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 1.1rem;
+            letter-spacing: 1px;
             position: relative;
             overflow: hidden;
         }
@@ -1153,24 +939,23 @@
         .view-collection::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
-            transition: transform 0.5s ease;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(191, 151, 255, 0.3), transparent);
+            transition: all 0.5s ease;
         }
 
         .view-collection:hover::before {
-            transform: translate(25%, 25%);
+            left: 100%;
         }
 
         .view-collection:hover {
-            background: linear-gradient(45deg, rgba(191, 151, 255, 0.3), rgba(191, 151, 255, 0.2));
-            border-color: var(--accent);
-            box-shadow: 0 0 30px rgba(191, 151, 255, 0.3);
-            transform: translateY(-2px);
-            color: var(--accent);
+            background: linear-gradient(135deg, rgba(191, 151, 255, 0.3), rgba(10, 10, 19, 0.9));
+            transform: translateY(-3px);
+            box-shadow: var(--glow-primary);
+            border-color: var(--primary);
         }
 
         .view-collection i {
@@ -1460,6 +1245,7 @@
             padding: 5px;
             justify-content: space-between;
             align-items: center;
+            margin-top: 4% !important;
         }
 
         .left-section {
@@ -2161,8 +1947,8 @@ function getIntervalStart() {
                     </ul>
                 </li>
                 {% endfor %}
-                <a href="{% url 'showcase:currencymarket' %}" style="margin-left: 25px;">
-                    <button class="button-85" role="button" style="display: flex; flex-direction: row;"><i class="fas fa-gem user-stat-icon" style="color: #ED2221; margin-top: 4px;"></i>➕</button>
+                <a href="{% url 'showcase:currencymarket' %}">
+                    <button class="button-85" role="button" style="margin-left: 50px; display: flex; flex-direction: row;"><i class="fas fa-gem user-stat-icon" style="color: #ED2221; margin-top: 4px;"></i>➕</button>
                 </a>
             </ul>
             <ul id="simpleNavbar" style="display: none; flex-direction: row; align-items: center;">
@@ -2197,8 +1983,38 @@ function getIntervalStart() {
                 {% endif %}
             </a>
         </div>
+        <div class="user-info">
             <h4 class="username">{{ user.username }}</h4>
-        {% if request.user.is_authenticated and request.user.userstate.state == 0 %}
+            <div class="user-stats">
+                <a href="{% url 'showcase:currencymarket' %}">
+                    <div class="user-stat">
+                        <img src="/static/css/images/rubeye.png" style="width: 20px; height: 20px; transform: translate(0%, 15%); display: flex;">
+                        <div class="sellupdate" id="sellupdate">
+                            <span id="currency-amount">{{ userprofile.currency_amount }}</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="{% url 'showcase:mylevel' %}">
+                    <div class="user-stat">
+                        <i class="fas fa-trophy user-stat-icon" style="color: var(--accent);"></i>
+                        <span>{{ userprofile.level }}</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!--<button class="buttonets" onclick="toggleMode()" style="margin-left: auto; margin-right: auto; margin-top: 10px;">
+              <strong><h6 id="visual-mode-text">Visual Mode</h6></strong>
+              <div id="containerteed-stars">
+                <div id="stars"></div>
+              </div>
+
+              <div id="glow">
+                <div class="circle"></div>
+                <div class="circle"></div>
+              </div>
+            </button>-->
+        {% if user.is_authenticated and request.user.userstate.state == 0 %}
              <form method="post" action="{% url 'showcase:go_lootbox' %}">
               {% csrf_token %}
               <button class="buttonets" style="margin-left: auto; margin-right: auto; margin-top: 10px; margin-bottom: 10px;">
@@ -2212,7 +2028,7 @@ function getIntervalStart() {
                 </div>
               </button>
              </form>
-        {% else %}
+        {% elif user.is_authenticated %}
             <form method="post" action="{% url 'showcase:go_home' %}">
           {% csrf_token %}
           <button class="buttonets" style="margin-left: auto; margin-right: auto; margin-top: 10px;">
@@ -2226,10 +2042,21 @@ function getIntervalStart() {
             </div>
           </button>
         </form>
+        {% else %}
+        <form method="post" action="{% url 'showcase:go_lootbox' %}">
+              {% csrf_token %}
+              <button class="buttonets" style="margin-left: auto; margin-right: auto; margin-top: 10px; margin-bottom: 10px;">
+                <strong><h6 id="visual-mode-text">Lootbox</h6></strong>
+                <div id="containerteed-stars">
+                  <div id="stars"></div>
+                </div>
+                <div id="glow">
+                  <div class="circle"></div>
+                  <div class="circle"></div>
+                </div>
+              </button>
+             </form>
         {% endif %}
-
-
-
         <style>
             .notification-bar {
   position: relative;
@@ -2421,298 +2248,42 @@ function getIntervalStart() {
     </div>
 {% empty %}
     <div class="user-profile">
-
-        <div class="user-info">
-            <div class="profile-picture" style="--profile-bg-image: url('{{ userprofile.newprofile_profile_picture_url|default:'/static/css/images/a.jpg' }}');">
-            <a href="{{ userprofile.newprofile_profile_url }}">
-                <img src="{{ userprofile.newprofile_profile_picture_url|default:'/static/css/images/a.jpg' }}" alt="Profile Picture" style="border-radius: 50px; margin-right: 20px;" onerror="this.onerror=null; this.src='/static/css/images/a.jpg';">
-                {% if userprofile.level.icon %}
-                <div class="level-badge">{{ userprofile.level.icon }}</div>
-                {% else %}
-                <div class="level-badge">👑</div>
-                {% endif %}
+        <div class="profile-picture" style="--profile-bg-image: url('/static/css/images/a.jpg'); margin-top: 40px;
+">
+            <a href="{% url 'login' %}?next={{ request.path }}" style="display: contents;">
+                <img src="/static/css/images/a.jpg" alt="Profile Picture" style="border-radius: 50px; margin-right: 20px;">
             </a>
         </div>
-            <h4 class="username">Guest</h4>
+        <div class="user-info">
+            <h2 class="username">Guest</h2>
             <a href="{% url 'login' %}?next={% url 'showcase:currencymarket' %}" style="text-decoration: none;">
-
-                </a>
-
-         <div class="containerents" style="font-family: 'Arial', sans-serif; background-image: linear-gradient(#12121f 0%, #1a1a2e 100%); display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 0;">
-    <div class="notification-bar" style="border-radius: 8px; padding: 15px 30px; color: white; display: flex; flex-direction: column; justify-content: space-between; align-items: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border-bottom: 2px solid #2d3748;" id="notificationBar">
-        <div class="notification-content">
-      <div class="inner-section" style="display: flex; flex-direction: row; padding: 5px;
-            margin-top: 4% !important;">
-        <div class="left-section" style="display: flex; flex-direction: column;">
-          <div class="title-container" style="display: flex; align-items: center; gap: 10px;">
-            <div class="title" style="font-size: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">INCOMING</div>
-
-            <div class="dot"></div>
-          </div>
-          <div class="subtitle" style="font-size: 16px; color: #a0aec0; margin-top: 4px;">Ruby Drop</div>
-        </div>
-
-        <div class="right-section" style="display: flex; align-items: center; margin-left: 10px; gap: 15px;">
-<div class="ruby-count tier-{{ user_tier_code }}"
-  style="display: flex;
-         align-items: center;
-         gap: 8px;
-         background-color: #2d3748;
-         padding: 8px 15px;
-         border-radius: 6px;">
-  <div class="ruby-icon" style="color: #38b2f8; font-size: 20px;">
-    <img src="/static/css/images/rubeye.png" style="width: 25px; height: 25px; transform: translate(0%, 15%); display: flex;">
-  </div>
-  <div class="count" id="ruby-count" style="font-size: 18px; font-weight: bold;">
-    2,000
-  </div>
-</div>
-
-    <div class="demo-section">
-        <div class="info-icon">
-            <div class="tooltip">
-                Login for Ruby Multiplier
-
-            </div>
-            <span>i</span>
-        </div>
-    </div>
-        </div>
-          <div class="sparks">
-  <div class="spark" style="--left: 5%;  --drift-x: -30px; --color: #fef68a; --duration: 2.5s; --delay: 0s;"></div>
-  <div class="spark" style="--left: 15%; --drift-x:  25px; --color: #a0e9ff; --duration: 1.8s; --delay: 0.3s;"></div>
-  <div class="spark" style="--left: 25%; --drift-x: -20px; --color: #ff9ae0; --duration: 2.2s; --delay: 0.6s;"></div>
-  <div class="spark" style="--left: 35%; --drift-x:  40px; --color: #c3ff88; --duration: 3s;   --delay: 0.2s;"></div>
-  <div class="spark" style="--left: 45%; --drift-x: -15px; --color: #ffd47e; --duration: 2.7s; --delay: 0.8s;"></div>
-  <div class="spark" style="--left: 55%; --drift-x:  30px; --color: #ff6b6b; --duration: 1.9s; --delay: 0.4s;"></div>
-  <div class="spark" style="--left: 65%; --drift-x: -35px; --color: #8bd3ff; --duration: 2.4s; --delay: 1s;"></div>
-  <div class="spark" style="--left: 75%; --drift-x:  20px; --color: #d4b0ff; --duration: 2.1s; --delay: 0.5s;"></div>
-  <div class="spark" style="--left: 85%; --drift-x: -25px; --color: #ffee93; --duration: 2.8s; --delay: 0.9s;"></div>
-  <div class="spark" style="--left: 95%; --drift-x:  15px; --color: #ffecb3; --duration: 2s;   --delay: 0.7s;"></div>
-
-        </div>
-    </div>
-    </div>
-    </div>
-    </div>
-                                    {% if user.is_authenticated %}
-            <div class="containerents" style="font-family: 'Arial', sans-serif; background-image: linear-gradient(#12121f 0%, #1a1a2e 100%); display: flex; flex-direction: row; justify-content: center; align-items: center; margin: 0;">
-        <div class="notification-bar" style="border-radius: 8px; padding: 15px 20px; color: white; display: flex; flex-direction: column; justify-content: space-between; align-items: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border-bottom: 2px solid #2d3748;">
-        <div class="inner-section" style="display: flex; flex-direction: row; padding: 5px;
-            margin-top: 4% !important;">
-            <div class="left-section" style="display: flex; flex-direction: column;">
-                <div class="title-container" style="display: flex; align-items: center; gap: 10px;">
-                    <div class="title" style="font-size: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">INCOMING</div>
-                    <div class="dot" style="width: 12px; height: 12px; background-color: #38b2f8; border-radius: 50%;"></div>
-                </div>
-                <div class="subtitle" style="font-size: 16px; color: #a0aec0; margin-top: 4px;">Ruby Drop</div>
-            </div>
-            <div class="right-section" style="display: flex; align-items: center; margin-left: 10px; gap: 15px;">
-                <div class="ruby-count" style="display: flex; align-items: center; gap: 8px; background-color: #2d3748; padding: 8px 15px; border-radius: 6px;">
-                    <div class="ruby-icon" style="color: #38b2f8; font-size: 20px;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#38b2f8"/>
-                            <path d="M2 17L12 22L22 17" stroke="#38b2f8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M2 12L12 17L22 12" stroke="#38b2f8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+            <div class="user-stats">
+                <div class="user-stat">
+                     <img src="/static/css/images/rubeye.png" style="width: 20px; height: 20px; transform: translate(0%, 15%); display: flex;">
+                    <div class="sellupdate" id="sellupdate">
+                        <span id="currency-amount">Login To Earn Rubies!</span>
                     </div>
-                    <div class="count" id="ruby-count" style="font-size: 18px; font-weight: bold;">2,000</div>
                 </div>
-                <div class="info-icon" style="width: 24px; height: 24px; background-color: #2d3748; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative;">
-                    <span style="font-size: 14px; font-weight: bold; color: #a0aec0;">i</span>
-                    <div class="tooltip" style="position: absolute; top: 30px; right: 0; width: 150px; background-color: #2d3748; color: white; padding: 10px; border-radius: 6px; font-size: 14px; display: none; z-index: 10; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);">Collect ruby drops to upgrade your items and unlock special features.</div>
+                <div class="user-stat">
+                    <i class="fas fa-trophy user-stat-icon" style="color: var(--accent);"></i>
+                    <span>Login To Level!</span>
                 </div>
             </div>
-            </div>
-
-<div
-  id="halfhour-timer"
-  style="
-    font-family: Arial, sans-serif;
-    background-color: #2d3748;
-    color: #38b2f8;
-    padding: 8px 15px;
-    border-radius: 6px;
-    font-size: 18px;
-    font-weight: bold;
-    margin-left: 15px;
-    display: inline-block;
-  "
->30:00</div>
-
-<button
-  id="ruby-drop-btn"
-  style="
-    display: none;
-    margin-left: 10px;
-    padding: 8px 15px;
-    border-radius: 6px;
-    background-color: #e53e3e;
-    color: white;
-    border: none;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-  "
->Ruby Drop</button>
-
-<!-- replace 'drop-sound.mp3' with your actual audio file -->
-<audio id="ruby-sound" src="drop-sound.mp3" preload="auto"></audio>
-
-<script>
-const INTERVAL_MS = 30 * 60 * 1000;
-const timerEl    = document.getElementById('timer');
-const rubyBtn    = document.getElementById('rubyBtn');
-const rubySound  = document.getElementById('rubySound');
-
-let currentIntervalStart = getIntervalStart();
-window.dropAmount = 0;
-
-function getIntervalStart() {
-
-  return Math.floor(Date.now() / INTERVAL_MS) * INTERVAL_MS;
-}
-
-function handleIntervalRollover(prevStart) {
-  const clickKey    = 'rubyClicks_' + prevStart;
-  const totalClicks = parseInt(localStorage.getItem(clickKey), 10) || 0;
-  let reward;
-
-  if (totalClicks < 100) {
-
-    reward = Math.floor(Math.random() * (25 - 10 + 1)) + 10;
-  } else {
-
-    reward = Math.round(2500 / totalClicks);
-  }
-
-  window.dropAmount = reward;
-
-  localStorage.removeItem(clickKey);
-  return reward;
-}
-
-function updateCountdown() {
-  const now   = Date.now();
-  const start = getIntervalStart();
-
-  if (start !== currentIntervalStart) {
-    const prevStart = currentIntervalStart;
-
-    const drop    = handleIntervalRollover(prevStart);
-    const clicked = localStorage.getItem('rubyClickedInterval') === String(prevStart);
-
-    console.log(
-      `💎 Drop calculated: ${drop}. ` +
-      `User ${clicked ? 'did' : 'did NOT'} click during that window.`
-    );
-
-    currentIntervalStart = start;
-    dropFired = false;
-    localStorage.removeItem('rubyClickedInterval');
-    rubyBtn.classList.remove('clicked');
-    rubyBtn.disabled   = false;
-    rubyBtn.textContent = 'Ruby Drop';
-  }
-
-  const elapsed     = now - start;
-  const remainingMs = INTERVAL_MS - elapsed;
-  const totalSec    = Math.max(0, Math.ceil(remainingMs / 1000));
-
-  const mins = Math.floor(totalSec / 60);
-  const secs = totalSec % 60;
-  timerEl.textContent = `${pad(mins)}:${pad(secs)}`;
-
-  if (totalSec > 0 && totalSec < 120) {
-    rubyBtn.style.display = 'inline-block';
-  } else {
-    rubyBtn.style.display = 'none';
-  }
-}
-
-</script>
-
-<script>
-  function pad(n) {
-    return n.toString().padStart(2, '0');
-  }
-
-  function updateHourlyCountdown() {
-    const now = new Date();
-    const nextHour = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      now.getHours() + 1,
-      0, 0, 0
-    );
-
-    const diffMs   = nextHour - now;
-    const totalSec = Math.ceil(diffMs / 1000);
-    const minutes  = Math.floor(totalSec / 120);
-    const seconds  = totalSec % 60;
-
-    timer.textContent = `${pad(minutes)}:${pad(seconds)}`;
-
-    if (totalSec > 0 && totalSec < 120) {
-      timer.style.backgroundColor = '#48bb78';
-      timer.style.color = '#fff';
-      rubyBtn.style.display = 'inline-block';
-    } else {
-      timer.style.backgroundColor = '#2d3748';
-      timer.style.color = '#38b2f8';
-      rubyBtn.style.display = 'none';
-    }
-  }
-
-  const timer   = document.getElementById('hourly-timer');
-  const rubyBtn = document.getElementById('ruby-drop-btn');
-
-  updateHourlyCountdown();
-  setInterval(updateHourlyCountdown, 1000);
-</script>
-
-        </div>
-    </div>
-
-    <script>
-
-        const infoIcon = document.querySelector('.info-icon');
-        infoIcon.addEventListener('mouseover', () => {
-            const tooltip = infoIcon.querySelector('.tooltip');
-            tooltip.style.display = 'block';
-        });
-
-        infoIcon.addEventListener('mouseout', () => {
-            const tooltip = infoIcon.querySelector('.tooltip');
-            tooltip.style.display = 'none';
-        });
-
-        function updateRubyCount(count) {
-            document.getElementById('ruby-count').textContent = count.toLocaleString();
-        }
-
-        setTimeout(() => {
-            updateRubyCount(2500);
-        }, 3000);
-    </script>
-
-    <script>
-
-        function updateRubyCount(count) {
-            document.getElementById('ruby-count').textContent = count.toLocaleString();
-        }
-
-        setTimeout(() => {
-            updateRubyCount(2500);
-        }, 3000);
-
-        const infoIcon = document.querySelector('.info-icon');
-        infoIcon.addEventListener('click', () => {
-            const tooltip = infoIcon.querySelector('.tooltip');
-            tooltip.style.display = tooltip.style.display === 'block' ? 'none' : 'block';
-        });
-    </script>
+                </a>
+        {% if not user.is_authenticated %}
+            <form method="post" action="{% url 'showcase:go_lootbox' %}">
+              {% csrf_token %}
+              <button class="buttonets" style="margin-left: auto; margin-right: auto; margin-top: 10px; margin-bottom: 10px;">
+                <strong><h6 id="visual-mode-text">Lootbox</h6></strong>
+                <div id="containerteed-stars">
+                  <div id="stars"></div>
+                </div>
+                <div id="glow">
+                  <div class="circle"></div>
+                  <div class="circle"></div>
+                </div>
+              </button>
+             </form>
         {% endif %}
 {% endfor %}
 
@@ -2726,7 +2297,7 @@ function updateCountdown() {
       }
     </script>
 
-            <div class="sidebar-nav">
+             <div class="sidebar-nav">
                 <div class="nav-section">
                     <h3 class="section-title"><i class="fas fa-compass"></i>Home<i class="fas fa-chevron-down toggle-icon"></i></h3>
 
@@ -3103,7 +2674,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </a>
                     {% endif %}
             </div>
-        </aside>
+            </div></div></div></aside>
     </div>
 
     <script>

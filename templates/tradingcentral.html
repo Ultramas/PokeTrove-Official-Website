@@ -1,500 +1,442 @@
-{% include 'navtrove.html' %}
-
 {% load static %}
 
-{% block content %}
-
+{% include 'navtrove.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Central</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-primary: #00f0ff;
+            --color-secondary: #2ecc71;
+            --color-background: #0f172a;
+            --color-card: rgba(255, 255, 255, 0.08);
+            --color-card-hover: rgba(255, 255, 255, 0.12);
+            --color-text: #f1f5f9;
+            --color-text-muted: #94a3b8;
+            --color-border: rgba(255, 255, 255, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-	<!-- title -->
-	<title>Shop</title>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: var(--color-text);
+            padding: 40px 20px;
+        }
 
-	<!-- favicon -->
-	<link rel="shortcut icon" type="image/png" href="static/img/favicon.png">
-	<!-- google font -->
-	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
-	<!-- fontawesome -->
-    <link rel="stylesheet" type="text/css" href="{% static 'css/all.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/owl.carousel.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/animate.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/meanmenu.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/responsive.css' %}">
+        /* Header Section */
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(46, 204, 113, 0.1));
+            border-radius: var(--border-radius);
+            border: 1px solid var(--color-border);
+        }
 
-<style>
-	:root {
-    --color-primary: #00f0ff;
-    --primary: #00f0ff;
-    --color-secondary: #2ecc71;
-    --color-background: #ecf0f1;
-    --color-text: #2c3e50;
-    --color-text-light: #7f8c8d;
-    --color-border: #bdc3c7;
-    --border-radius: 8px;
-    --transition: all 0.3s ease;
-}
-        .nav-link {
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .page-header h1 .highlight {
+            color: var(--color-primary);
+        }
+
+        .page-header p {
+            color: var(--color-text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Trade Offers Grid */
+        .trade-offers-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Trade Offer Card */
+        .trade-offer {
+            background: var(--color-card);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .trade-offer:hover {
+            transform: translateY(-8px);
+            background: var(--color-card-hover);
+            box-shadow: 0 20px 40px rgba(0, 240, 255, 0.15);
+            border-color: rgba(0, 240, 255, 0.3);
+        }
+
+        /* Card Header */
+        .trade-offer__header {
+            padding: 20px 24px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(46, 204, 113, 0.1));
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .trade-offer__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--color-text);
+        }
+
+        .trade-offer__user {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            text-decoration: none;
-            color: var(--foreground);
-            position: relative;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-            gap: 15px;
-    		color: var(--primary);
+            gap: 8px;
         }
-body {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    color: var(--color-text);
-    background-color: var(--color-background);
-    margin: 0;
-    padding: 20px;
-}
 
-.trade-offers-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
+        .trade-offer__user i {
+            color: var(--color-primary);
+        }
 
-.trade-offer {
-    background: rgb(255, 255, 255, 0.25);
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: var(--transition);
-}
+        /* Trade Items Grid */
+        .trade-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            padding: 20px;
+        }
 
-.trade-offer:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
+        /* Individual Trade Item */
+        .trade-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
 
-.trade-offer__header {
-    padding: 20px;
-    background: rgb(0, 255, 204, 0.2);
-    color: #fff;
-}
+        .trade-item:hover {
+            transform: scale(1.05);
+            border-color: var(--color-primary);
+            box-shadow: 0 8px 24px rgba(0, 240, 255, 0.2);
+        }
 
-.trade-offer__title {
-    margin: 0;
-    font-size: 1.5rem;
-}
+        .trade-item__image {
+            width: 100%;
+            /*height: 120px;*/
+            object-fit: cover;
+            display: block;
+        }
 
-.trade-offer__user {
-    margin: 5px 0 0;
-    font-size: 0.9rem;
-    opacity: 0.8;
-}
+        .trade-item__details {
+            padding: 12px;
+        }
 
-.trade-offer__actions {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px;
-    background-color: #f8f9fa;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    background: rgb(21, 200, 170, 0.20);
-}
+        .trade-item__title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-.trade-offer:hover .trade-offer__actions {
-    opacity: 1;
-    visibility: visible;
-}
+        .trade-item__description {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
 
+        .trade-item__label {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
 
-.btn {
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 16px;
-    border: none;
-    border-radius: var(--border-radius);
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: var(--transition);
-}
+        .label--new {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
 
-.btn--primary {
-    background-color: var(--color-primary);
-    color: #fff;
-}
+        .label--primary {
+            background: linear-gradient(135deg, var(--color-primary), #00c8d4);
+            color: #0f172a;
+        }
 
-.btn--secondary {
-    background-color: var(--color-secondary);
-    color: #fff;
-}
+        /* Action Buttons */
+        .trade-offer__actions {
+            display: flex;
+            gap: 12px;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid var(--color-border);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: var(--transition);
+        }
 
-.btn:hover {
-    opacity: 0.9;
-}
+        .trade-offer:hover .trade-offer__actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-.btn__icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 8px;
-}
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            flex: 1;
+        }
 
-.trade-items {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    padding: 20px;
-}
+        .btn i {
+            font-size: 1rem;
+        }
 
-.trade-item {
-    background-color: #83f17cba;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: var(--transition);
-}
+        .btn--primary {
+            background: linear-gradient(135deg, var(--color-primary), #00c8d4);
+            color: #0f172a;
+        }
 
-.trade-item:hover {
-    transform: scale(1.03);
-}
+        .btn--primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 240, 255, 0.4);
+        }
 
-.trade-item__image {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-}
+        .btn--secondary {
+            background: linear-gradient(135deg, var(--color-secondary), #27ae60);
+            color: white;
+        }
 
-.trade-item__details {
-    padding: 10px;
-}
+        .btn--secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
+        }
 
-.trade-item__title {
-    margin: 0 0 5px;
-    font-size: 1rem;
-}
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease;
+        }
 
-.trade-item__description {
-    margin: 0;
-    font-size: 0.8rem;
-    color: var(--color-text-light);
-}
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-.trade-item__label {
-    display: inline-block;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: bold;
-    text-transform: uppercase;
-}
+        .modal__content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            margin: 8% auto;
+            padding: 0;
+            border-radius: var(--border-radius);
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid var(--color-border);
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
 
-.label--new {
-    background-color: #e74c3c;
-    color: #fff;
-}
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
 
-.label--primary {
-    background-color: var(--color-primary);
-    color: #fff;
-}
+        .modal__header {
+            padding: 20px 24px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(46, 204, 113, 0.05));
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
+        .modal__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
 
-.modal__content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
-    border-radius: var(--border-radius);
-    max-width: 500px;
-    position: relative;
-}
+        .modal__close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--color-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
 
-.modal__close {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    background: none;
-    border: none;
-}
+        .modal__close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
 
-@media (max-width: 768px) {
-    .trade-offer__actions {
-        flex-direction: column;
-        gap: 10px;
-    }
+        .modal__body {
+            padding: 24px;
+        }
 
-    .btn {
-        width: 100%;
-    }
-}
+        .modal__image {
+            width: 100%;
+            /*height: 250px;*/
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
 
-body {
-  font-family: Verdana, sans-serif;
-  margin: 0;
-}
+        .modal__description {
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
 
-* {
-  box-sizing: border-box;
-}
+        /* Pagination */
+        .pagination-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
 
-.row > .column {
-  padding: 0 8px;
-}
+        .pagination-wrap ul {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+        }
 
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
+        .pagination-wrap a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--color-card);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            color: var(--color-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
 
-.column {
-  float: left;
-  width: 25%;
-}
+        .pagination-wrap a:hover,
+        .pagination-wrap a.active {
+            background: var(--color-primary);
+            color: #0f172a;
+            border-color: var(--color-primary);
+        }
 
-/* The Modal (background) */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  padding-top: 100px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: black;
-}
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--color-text-muted);
+        }
 
-/* Modal Content */
-.modal-content {
-  position: relative;
-  background-color: #fefefe;
-  margin: auto;
-  padding: 0;
-  width: 90%;
-  max-width: 1200px;
-}
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--color-primary);
+            opacity: 0.5;
+        }
 
-/* The Close Button */
-.close {
-  color: white;
-  position: absolute;
-  top: 10px;
-  right: 25px;
-  font-size: 35px;
-  font-weight: bold;
-}
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 1.75rem;
+            }
 
-.close:hover,
-.close:focus {
-  color: #999;
-  text-decoration: none;
-  cursor: pointer;
-}
+            .trade-offers-container {
+                grid-template-columns: 1fr;
+            }
 
-.mySlides {
-  display: none;
-}
+            .trade-offer__actions {
+                opacity: 1;
+                transform: translateY(0);
+                flex-direction: column;
+            }
 
-.cursor {
-  cursor: pointer;
-}
-
-/* Next & previous buttons */
-.prev,
-.next {
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  width: auto;
-  padding: 16px;
-  margin-top: -50px;
-  color: white;
-  font-weight: bold;
-  font-size: 20px;
-  transition: 0.6s ease;
-  border-radius: 0 3px 3px 0;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-/* Position the "next button" to the right */
-.next {
-  right: 0;
-  border-radius: 3px 0 0 3px;
-}
-
-/* On hover, add a black background color with a little bit see-through */
-.prev:hover,
-.next:hover {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* Number text (1/3 etc) */
-.numbertext {
-  color: #f2f2f2;
-  font-size: 12px;
-  padding: 8px 12px;
-  position: absolute;
-  top: 0;
-}
-
-img {
-  margin-bottom: -4px;
-}
-
-.caption-container {
-  text-align: center;
-  background-color: black;
-  padding: 2px 16px;
-  color: white;
-}
-
-.demo {
-  opacity: 0.6;
-}
-
-.active,
-.demo:hover {
-  opacity: 1;
-}
-
-img.hover-shadow {
-  transition: 0.3s;
-}
-
-.hover-shadow:hover {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-</style>
-
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
-<body style="background: linear-gradient(to right, blue, lightblue); ">
+<body>
+    <!-- Page Header -->
+    <header class="page-header">
+		<br>
+		<br>
+		<br>
+        <h1><span class="highlight">PokeTrove</span> Trading Central</h1>
+        <p>Browse and trade items with other collectors</p>
+    </header>
 
-  <!--PreLoader-->
-  <!--<div class="loader">
-      <div class="loader-inner">
-          <div class="circle"></div>
-      </div>
-  </div>-->
-    <!--PreLoader Ends-->
-
-	<!-- header -->
-
-	<!-- search area -->
-	<div class="search-area">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-12">
-					<span class="close-btn"><i class="fas fa-window-close"></i></span>
-					<div class="search-bar">
-						<div class="search-bar-tablecell">
-							<h3>Search For:</h3>
-							<input type="text" placeholder="Keywords">
-							<button type="submit">Search <i class="fas fa-search"></i></button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end search area -->
-<br>
-<br>
-<br>
-<br>
-	<!-- breadcrumb-section -->
-        {% for BackgroundImage in Background %}
-            {% if BackgroundImage.page == "tradingcentral.html" %}
-                {% if BackgroundImage.position == 1 %}
-	<div class="breadcrumb-section breadcrumb-bg" style="background: url('{{BackgroundImage.file.url}}'); background-size: cover; background-attachment: fixed;">
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-		<div class="container" style="margin-top: 10%;">
-			<div class="row">
-				<div class="col-lg-8 offset-lg-2 text-center">
-					<div class="breadcrumb-text">
-						{% for BackgroundImage in TextFielde %}
-						{% if BackgroundImage.page == "tradingcentral.html" %}
-						{% if BackgroundImage.section == 1 %}
-						<p>{{BackgroundImage.text}}</p>
-					    {% endif %}
-						{% endif %}
-						{% endfor %}
-
-						<h2 style="display: flex; justify-content: center;"><span class="orange-text"> PokeTrove </span> <div style="color: white; opacity: 0.5;">Trading Central</div> </h2>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end breadcrumb section -->
-
-	<!-- products -->
-	<div class="product-section mt-150 mb-150" style="background: none;">
-		<div class="container" style="margin-top: 10%;">
-
-
-
+    <!-- Trade Offers Grid -->
     <main class="trade-offers-container">
         {% for TradeOffer in TradeOffers %}
             {% if TradeOffer.trade_status == 0 and TradeOffer.user2 == None %}
                 <article class="trade-offer">
-                    <header class="trade-offer__actions">
-                        {% with Friends|first as Friend %}
-                            {% if TradeOffer.user == Friend.friend %}
-                                <button class="btn btn--primary" data-action="contact" data-trader-id="{{TradeOffer.id}}">
-                                    <img src="{% static 'css/images/contacts.png' %}" alt="" class="btn__icon">
-                                    Contact Trader
-                                </button>
-                            {% else %}
-                                <button class="btn btn--secondary" data-action="friend-request">
-                                    <img src="{% static 'css/images/friends.png' %}" alt="" class="btn__icon">
-                                    Send Friend Request
-                                </button>
-                            {% endif %}
-                        {% endwith %}
-						{% if TradeOffer.slug %}
-							<a href="{% url 'showcase:responsetradeitems' TradeOffer.slug %}" class="btn btn--primary">
-								<img src="{% static 'css/images/trades.png' %}" alt="" class="btn__icon">
-								Set Trade
-							</a>
-						{% endif %}
+                    <header class="trade-offer__header">
+                        <h2 class="trade-offer__title">{{ TradeOffer.title }}</h2>
+                        <p class="trade-offer__user">
+                            <i class="fas fa-user-circle"></i>
+                            {{ TradeOffer.user }}
+                        </p>
                     </header>
-                    <div class="trade-offer__header">
-                        <h2 class="trade-offer__title">{{TradeOffer.title}}</h2>
-                        <p class="trade-offer__user">By {{TradeOffer.user}}</p>
-                    </div>
+
                     <div class="trade-items">
                         {% for Item in TradeOffer.trade_items.all %}
-                            <div class="trade-item" data-item-id="{{Item.id}}">
+                            <div class="trade-item"
+                                 data-item-id="{{ Item.id }}"
+                                 data-title="{{ Item.title }}"
+                                 data-description="{{ Item.description }}"
+                                 data-image="{{ Item.image.url }}">
                                 <img src="{{ Item.image.url }}" alt="{{ Item.title }}" class="trade-item__image">
                                 <div class="trade-item__details">
                                     <h3 class="trade-item__title">{{ Item.title }}</h3>
-                                    <p class="trade-item__description">{{ Item.description|truncatechars:100 }}</p>
+                                    <p class="trade-item__description">{{ Item.description|truncatechars:60 }}</p>
                                     {% if Item.get_label_display %}
                                         <span class="trade-item__label {% if Item.get_label_display == 'New' %}label--new{% else %}label--primary{% endif %}">
                                             {{ Item.get_label_display }}
@@ -502,198 +444,140 @@ img.hover-shadow {
                                     {% endif %}
                                 </div>
                             </div>
+                        {% empty %}
+                            <p class="empty-state">No items in this trade offer</p>
                         {% endfor %}
                     </div>
+
+                    <footer class="trade-offer__actions">
+                        {% with Friends|first as Friend %}
+                            {% if TradeOffer.user == Friend.friend %}
+                                <button class="btn btn--primary" data-action="contact" data-trader-id="{{ TradeOffer.id }}">
+                                    <i class="fas fa-comments"></i>
+                                    Contact Trader
+                                </button>
+                            {% else %}
+                                <button class="btn btn--secondary" data-action="friend-request" data-user-id="{{ TradeOffer.user.id }}">
+                                    <i class="fas fa-user-plus"></i>
+                                    Add Friend
+                                </button>
+                            {% endif %}
+                        {% endwith %}
+
+                        {% if TradeOffer.slug %}
+                            <a href="{% url 'showcase:responsetradeitems' TradeOffer.slug %}" class="btn btn--primary">
+                                <i class="fas fa-exchange-alt"></i>
+                                Set Trade
+                            </a>
+                        {% endif %}
+                    </footer>
                 </article>
             {% endif %}
+        {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-box-open"></i>
+                <h3>No Trade Offers Available</h3>
+                <p>Check back later for new trading opportunities!</p>
+            </div>
         {% endfor %}
     </main>
 
-    <div id="itemDetailsModal" class="modal" aria-hidden="true">
+    <!-- Pagination -->
+    <nav class="pagination-wrap">
+        <ul>
+            <li><a href="?page={{ page_obj.previous_page_number }}" {% if not page_obj.has_previous %}style="pointer-events: none; opacity: 0.5;"{% endif %}>&laquo;</a></li>
+            {% for num in page_obj.paginator.page_range %}
+                <li><a href="?page={{ num }}" {% if page_obj.number == num %}class="active"{% endif %}>{{ num }}</a></li>
+            {% endfor %}
+            <li><a href="?page={{ page_obj.next_page_number }}" {% if not page_obj.has_next %}style="pointer-events: none; opacity: 0.5;"{% endif %}>&raquo;</a></li>
+        </ul>
+    </nav>
+
+    <!-- Item Details Modal -->
+    <div id="itemDetailsModal" class="modal" aria-hidden="true" role="dialog">
         <div class="modal__content">
-            <button class="modal__close" aria-label="Close modal">&times;</button>
-            <h2 id="modalTitle"></h2>
-            <p id="modalDescription"></p>
-            <img id="modalImage" src="" alt="">
+            <header class="modal__header">
+                <h2 class="modal__title" id="modalTitle">Item Details</h2>
+                <button class="modal__close" aria-label="Close modal">&times;</button>
+            </header>
+            <div class="modal__body">
+                <img id="modalImage" class="modal__image" src="/placeholder.svg" alt="">
+                <p id="modalDescription" class="modal__description"></p>
+            </div>
         </div>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('itemDetailsModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDescription = document.getElementById('modalDescription');
+            const modalImage = document.getElementById('modalImage');
+            const closeModal = document.querySelector('.modal__close');
 
-			<div class="row">
-				<div class="col-lg-12 text-center">
-					<div class="pagination-wrap">
-						<ul>
-							<li><a href="#">Prev</a></li>
-							<li><a href="#">1</a></li>
-							<li><a class="active" href="#">2</a></li>
-							<li><a href="#">3</a></li>
-							<li><a href="#">Next</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end products -->
+            // Open modal with item details
+            document.querySelectorAll('.trade-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const title = item.dataset.title;
+                    const description = item.dataset.description;
+                    const imageSrc = item.dataset.image;
 
+                    modalTitle.textContent = title;
+                    modalDescription.textContent = description;
+                    modalImage.src = imageSrc;
+                    modalImage.alt = title;
 
-	<!-- footer -->
-	<div class="footer-area">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-3 col-md-6">
-					<div class="footer-box about-widget">
-						<h2 class="widget-title">About us</h2>
-						<p>Ut enim ad minim veniam perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae.</p>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="footer-box get-in-touch">
-						<h2 class="widget-title">Get in Touch</h2>
-						<ul>
-							<li>34/8, East Hukupara, Gifirtok, Sadan.</li>
-							<li>support@fruitkha.com</li>
-							<li>+00 111 222 3333</li>
-						</ul>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="footer-box pages">
-						<h2 class="widget-title">Pages</h2>
-						<ul>
-							<li><a href="index.html">Home</a></li>
-							<li><a href="about.html">About</a></li>
-							<li><a href="services.html">Shop</a></li>
-							<li><a href="news.html">News</a></li>
-							<li><a href="contact.html">Contact</a></li>
-						</ul>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="footer-box subscribe">
-						<h2 class="widget-title">Subscribe</h2>
-						<p>Subscribe to our mailing list to get the latest updates.</p>
-						<form action="index.html">
-							<input type="email" placeholder="Email">
-							<button type="submit"><i class="fas fa-paper-plane"></i></button>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end footer -->
+                    modal.style.display = 'block';
+                    modal.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
 
-	<!-- copyright -->
-	<div class="copyright">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-6 col-md-12">
-				</div>
-				<div class="col-lg-6 text-right col-md-12">
-					<div class="social-icons">
-						<ul>
-							<li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-							<li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
-							<li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
-							<li><a href="#" target="_blank"><i class="fab fa-linkedin"></i></a></li>
-							<li><a href="#" target="_blank"><i class="fab fa-dribbble"></i></a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end copyright -->
-<script>
-  const productDetailsButtons = document.querySelectorAll('.product-details');
-  const popups = document.querySelectorAll('.product-details-popup');
+            // Close modal function
+            const closeModalFn = () => {
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            };
 
-  productDetailsButtons.forEach((button, index) => {
-    button.addEventListener('click', () => {
-      popups[index].classList.remove('popup-hidden');
-    });
-  });
+            closeModal.addEventListener('click', closeModalFn);
 
-  const closeButtons = document.querySelectorAll('.popup-close');
+            // Close modal when clicking outside
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    closeModalFn();
+                }
+            });
 
-  closeButtons.forEach(closeButton => {
-    closeButton.addEventListener('click', () => {
-      const popup = closeButton.parentElement;
-      popup.classList.add('popup-hidden');
-    });
-  });
-</script>
+            // Close modal with Escape key
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && modal.style.display === 'block') {
+                    closeModalFn();
+                }
+            });
 
-	<!-- jquery -->
-     <script src="{% static 'css/js/jquery-1.11.3.min.js' %}"></script>
-     <script src="{% static 'css/js/main.js' %}"></script>
-     <script src="{% static 'css/js/css/bootstrapper.min.js' %}"></script>
-     <script src="{% static 'css/js/jquery.countdown.js' %}"></script>
-     <script src="{% static 'css/js/jquery.isotope-3.0.6.min.js' %}"></script>
-     <script src="{% static 'css/js/waypoints.js' %}"></script>
-	 <script src="{% static 'css/js/jquery.magnific-popup.min.js' %}"></script>
-     <script src="{% static 'css/js/owl.carousel.min.js' %}"></script>
-     <script src="{% static 'css/js/jquery.meanmenu.min.js' %}"></script>
-     <script src="{% static 'css/js/sticker.js' %}"></script>
-<script>
-	document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('itemDetailsModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalDescription = document.getElementById('modalDescription');
-    const modalImage = document.getElementById('modalImage');
-    const closeModal = document.querySelector('.modal__close');
+            // Handle button actions
+            document.querySelectorAll('.btn[data-action]').forEach(btn => {
+                btn.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    const action = event.currentTarget.dataset.action;
+                    const traderId = event.currentTarget.dataset.traderId;
+                    const userId = event.currentTarget.dataset.userId;
 
-    // Open modal with item details
-    document.querySelectorAll('.trade-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const title = item.querySelector('.trade-item__title').textContent;
-            const description = item.querySelector('.trade-item__description').textContent;
-            const imageSrc = item.querySelector('.trade-item__image').src;
-
-            modalTitle.textContent = title;
-            modalDescription.textContent = description;
-            modalImage.src = imageSrc;
-            modalImage.alt = title;
-
-            modal.style.display = 'block';
-            modal.setAttribute('aria-hidden', 'false');
+                    if (action === 'contact') {
+                        // Contact trader - you can replace with your messaging logic
+                        console.log(`Opening chat with trader ID: ${traderId}`);
+                        alert('Opening chat with trader...');
+                    } else if (action === 'friend-request') {
+                        // Send friend request - replace with AJAX call
+                        console.log(`Sending friend request to user ID: ${userId}`);
+                        btn.innerHTML = '<i class="fas fa-check"></i> Request Sent';
+                        btn.disabled = true;
+                        btn.style.opacity = '0.7';
+                    }
+                });
+            });
         });
-    });
-
-    // Close modal
-    closeModal.addEventListener('click', () => {
-        modal.style.display = 'none';
-        modal.setAttribute('aria-hidden', 'true');
-    });
-
-    // Close modal when clicking outside
-    window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-            modal.setAttribute('aria-hidden', 'true');
-        }
-    });
-
-    // Handle button actions
-    document.querySelectorAll('.btn').forEach(btn => {
-        btn.addEventListener('click', (event) => {
-            const action = event.currentTarget.dataset.action;
-            const traderId = event.currentTarget.dataset.traderId;
-
-            if (action === 'contact') {
-                // Implement contact trader functionality
-                console.log(`Contacting trader with ID: ${traderId}`);
-            } else if (action === 'friend-request') {
-                // Implement friend request functionality
-                console.log('Sending friend request');
-            }
-        });
-    });
-});
-</script>
+    </script>
 </body>
 </html>
-
-
-{% endblock content %}

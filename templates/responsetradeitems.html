@@ -1,470 +1,1272 @@
 {% load static %}
 
-{% block content %}
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap');
-
-    :root {
-        --primary: #00f0ff;
-        --primary-dark: #00a0a8;
-        --secondary: #ff00e5;
-        --accent: #4ecca3;
-        --dark: #0a0a20;
-        --darker: #050510;
-        --light: #e1e1ff;
-        --success: #00ff66;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Rajdhani', sans-serif;
-    }
-
-    .signup-container {
-        background-color: var(--darker);
-        background-image:
-            radial-gradient(circle at 20% 35%, rgba(0, 240, 255, 0.15) 0%, transparent 40%),
-            radial-gradient(circle at 75% 65%, rgba(255, 0, 229, 0.15) 0%, transparent 40%);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 2rem;
-        color: var(--light);
-    }
-
-    .forme-card {
-        background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-        border-radius: 16px;
-        padding: 2.5rem;
-        width: 100%;
-        max-width: 500px;
-        position: relative;
-        overflow: hidden;
-        border: 1px solid rgba(0, 240, 255, 0.3);
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(10px);
-    }
-
-    .forme-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, transparent, var(--primary), transparent);
-    }
-
-    .form-header {
-        text-align: center;
-        margin-bottom: 2rem;
-        animation: slideDown 0.6s ease-out;
-    }
-
-    .form-header h1 {
-        color: var(--primary);
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
-    }
-
-    .form-header p {
-        color: var(--light);
-        opacity: 0.8;
-    }
-
-    .form-content {
-        animation: fadeIn 0.8s ease-out;
-    }
-
-    .form-field {
-        margin-bottom: 1.5rem;
-        position: relative;
-    }
-
-    .form-content label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: var(--primary);
-        font-weight: 600;
-        transition: color 0.3s ease;
-        letter-spacing: 0.5px;
-    }
-
-    .form-content input {
-        width: 100%;
-        padding: 12px 15px;
-        background: rgba(10, 10, 32, 0.6);
-        border: 1px solid rgba(0, 240, 255, 0.3);
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        color: var(--light);
-    }
-
-    .form-content input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
-        transform: translateY(-2px);
-    }
-
-    .submit-button {
-        background: linear-gradient(45deg, var(--primary-dark), var(--primary));
-        color: var(--darker);
-        border: none;
-        border-radius: 8px;
-        padding: 12px 24px;
-        width: 100%;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-top: 1.5rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .submit-button::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
-        transition: transform 0.5s ease;
-    }
-
-    .submit-button:hover::before {
-        transform: translate(25%, 25%);
-    }
-
-    .submit-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
-    }
-
-    .submit-button:active {
-        transform: translateY(-1px);
-    }
-
-    .signuphere, .passwordreset {
-        margin: 1rem 0;
-        text-align: center;
-    }
-
-    .signuphere a, .passwordreset a {
-        color: var(--primary);
-        text-decoration: none;
-        transition: all 0.3s ease;
-        position: relative;
-        padding-bottom: 2px;
-    }
-
-    .signuphere a::after, .passwordreset a::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 0;
-        height: 1px;
-        background: var(--primary);
-        transition: width 0.3s ease;
-    }
-
-    .signuphere a:hover::after, .passwordreset a:hover::after {
-        width: 100%;
-    }
-
-    .signuphere a:hover, .passwordreset a:hover {
-        text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
-    }
-
-    @keyframes slideDown {
-        from {
-            transform: translateY(-20px);
-            opacity: 0;
-        }
-        to {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-
-    /* Error message styling */
-    .errorlist {
-        color: var(--secondary);
-        list-style: none;
-        padding: 0;
-        margin: 0.5rem 0;
-        font-size: 0.875rem;
-        animation: pulse 2s infinite;
-    }
-
-    /* Help text styling */
-    .helptext {
-        color: rgba(225, 225, 255, 0.7);
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-        display: block;
-    }
-
-    /* Password tooltip styles */
-    .password-label-wrapper {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .info-icon {
-        cursor: pointer;
-        color: var(--primary);
-        padding: 4px;
-        border-radius: 50%;
-        transition: all 0.2s ease;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .info-icon:hover {
-        color: var(--light);
-        background-color: rgba(0, 240, 255, 0.2);
-        box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-    }
-
-    .info-icon:focus {
-        outline: 2px solid var(--primary);
-        outline-offset: 2px;
-    }
-
-    .info-tooltip {
-        position: absolute;
-        top: calc(100% + 10px);
-        left: -10px;
-        background: rgba(10, 10, 32, 0.9);
-        border-radius: 8px;
-        padding: 12px 16px;
-        width: 280px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 240, 255, 0.3);
-        z-index: 50;
-        font-size: 14px;
-        color: var(--light);
-        visibility: hidden;
-        opacity: 0;
-        transform: translateY(-8px) scale(0.98);
-        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        border: 1px solid rgba(0, 240, 255, 0.3);
-    }
-
-    .info-tooltip::before {
-        content: '';
-        position: absolute;
-        top: -5px;
-        left: 20px;
-        width: 10px;
-        height: 10px;
-        background: rgba(10, 10, 32, 0.9);
-        transform: rotate(45deg);
-        border-left: 1px solid rgba(0, 240, 255, 0.3);
-        border-top: 1px solid rgba(0, 240, 255, 0.3);
-    }
-
-    .info-tooltip.visible {
-        visibility: visible;
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-
-    .tooltip-content {
-        position: relative;
-        padding-left: 20px;
-    }
-
-    .tooltip-content::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 3px;
-        height: 80%;
-        background: linear-gradient(to bottom, var(--primary), var(--secondary));
-        border-radius: 4px;
-        box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
-    }
-
-    @media (max-width: 640px) {
-        .info-tooltip {
-            width: 260px;
-            left: -50%;
-        }
-
-        .forme-card {
-            padding: 2rem 1.5rem;
-        }
-    }
-
-    @keyframes pulse {
-        0% { opacity: 0.7; }
-        50% { opacity: 1; }
-        100% { opacity: 0.7; }
-    }
-
-    @keyframes glow {
-        0% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
-        50% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.8); }
-        100% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
-    }
-</style>
-
-{% if not user.is_authenticated %}
-    <head>
-        <meta http-equiv="refresh" content="0; url=http://{{ request.get_host }}/showcase">
-    </head>
-{% else %}
-    <div class="wrapperew">
-        <div class="containerert">
-            <div class="formert">
-                <div class="forming"></div>
-            </div>
-        </div>
-    </div>
-{% endif %}
-
 {% include 'navtrove.html' %}
-<div class="signup-container" style="height: 150%; display: flex;">
-    <div class="forme-card" style="margin-left: auto; margin-right: auto; position: relative !important;">
-        <div class="form-header">
-			<h1>Responding Trade Offer</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make Trade Offer | PokeTrove</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #050510;
+            --bg-card: #0a0a1a;
+            --bg-card-hover: #0f0f25;
+            --bg-surface: #12122a;
+            --bg-input: #0d0d20;
+            --border-color: #1a1a3a;
+            --border-focus: #00f0ff;
+            --primary: #00f0ff;
+            --primary-dim: rgba(0, 240, 255, 0.15);
+            --primary-glow: rgba(0, 240, 255, 0.4);
+            --secondary: #ff6b35;
+            --accent-gold: #ffd700;
+            --accent-purple: #a855f7;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --text-muted: #555570;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --shadow-glow: 0 0 20px rgba(0, 240, 255, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .page-wrapper {
+            background:
+                radial-gradient(ellipse at top left, rgba(0, 240, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(168, 85, 247, 0.03) 0%, transparent 50%),
+                var(--bg-dark);
+            min-height: 100vh;
+            padding: 40px 24px 80px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .back-link:hover { color: var(--primary); }
+
+        .page-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Messages */
+        .messages {
+            margin-bottom: 24px;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: var(--success);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--warning);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+        }
+
+        /* Main form layout with structured sections */
+        .form-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Section Card Styles */
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.02) 0%, transparent 100%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header i {
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .section-header.gold i { color: var(--accent-gold); }
+        .section-header.purple i { color: var(--accent-purple); }
+        .section-header.success i { color: var(--success); }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .section-badge {
+            margin-left: auto;
+            padding: 4px 10px;
+            background: var(--primary-dim);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-body {
+            padding: 24px;
+        }
+
+        /* Two-column trade selection grid */
+        .trade-columns {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .trade-column {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .trade-column-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .trade-column-header.offering {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.05) 0%, transparent 100%);
+        }
+
+        .trade-column-header.offering i { color: var(--primary); }
+
+        .trade-column-header.wanting {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, transparent 100%);
+        }
+
+        .trade-column-header.wanting i { color: var(--accent-purple); }
+
+        .trade-column-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Added column value display styling */
+        .trade-column-value {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+
+        .trade-column-value i {
+            font-size: 10px;
+            color: var(--accent-gold) !important;
+        }
+
+        .trade-column-body {
+            padding: 20px;
+        }
+
+        /* Trade Arrow Divider */
+        .trade-arrow-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 80px;
+        }
+
+        .trade-arrow-circle {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-surface);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        /* Form Fields */
+        .form-field {
+            margin-bottom: 20px;
+        }
+
+        .form-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .field-label .required {
+            color: var(--danger);
+            margin-left: 4px;
+        }
+
+        .helptext {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .errorlist {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .errorlist li {
+            font-size: 13px;
+            color: var(--danger);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .errorlist li::before {
+            content: '\f06a';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 11px;
+        }
+
+        /* Text Inputs */
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Value Input with Icon */
+        .value-input-wrapper {
+            position: relative;
+        }
+
+        .value-input-wrapper .currency-symbol {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-gold);
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .value-input {
+            padding-left: 32px !important;
+        }
+
+        /* Read-only auto value input styling */
+        .value-input.auto-calculated {
+            background: var(--bg-surface);
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+
+        /* Searchable Select */
+        .searchable-select {
+            position: relative;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+
+        /* Selected Items Container */
+        .selected-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+            min-height: 80px;
+            padding: 12px;
+            background: var(--bg-surface);
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius-sm);
+        }
+
+        .selected-items.empty {
+            justify-content: center;
+            align-items: center;
+        }
+
+        .selected-items .empty-text {
+            color: var(--text-muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .selected-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: var(--primary-dim);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--primary);
+            animation: tagIn 0.2s ease;
+        }
+
+        @keyframes tagIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .selected-tag img {
+            width: 20px;
+            height: 28px;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        /* Price display in selected tag */
+        .selected-tag .tag-price {
+            color: var(--accent-gold);
+            font-size: 11px;
+        }
+
+        .remove-tag {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0;
+            font-size: 12px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .remove-tag:hover { color: var(--danger); }
+
+        /* Dropdown List */
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            max-height: 280px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .dropdown-list.active { display: block; }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dropdown-item:last-child { border-bottom: none; }
+
+        .dropdown-item:hover { background: var(--bg-surface); }
+
+        .dropdown-item.selected {
+            background: var(--primary-dim);
+        }
+
+        .dropdown-item.selected::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--primary);
+            margin-left: auto;
+            font-size: 11px;
+        }
+
+        .dropdown-item img {
+            width: 36px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .dropdown-item-info { flex: 1; }
+
+        .dropdown-item-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .dropdown-item-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Highlight price in dropdown */
+        .dropdown-item-price {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        .dropdown-empty {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* Trade Preview - Compact inline preview */
+        .trade-preview {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            margin-top: 16px;
+        }
+
+        .preview-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .preview-label i { color: var(--accent-gold); font-size: 10px; }
+
+        .preview-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .preview-side {
+            flex: 1;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .preview-item {
+            width: 40px;
+            height: 54px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-empty-text {
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        .preview-divider {
+            color: var(--primary);
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        /* Value summary bar styling */
+        .value-summary-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            margin-bottom: 8px;
+        }
+
+        .value-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .value-item-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .value-item-amount {
+            font-size: 20px;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .value-item-amount.offer-value {
+            color: var(--primary);
+        }
+
+        .value-item-amount.target-value {
+            color: var(--accent-purple);
+        }
+
+        .value-divider {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .value-divider-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-gold);
+            font-size: 14px;
+        }
+
+        .value-difference {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .value-difference.positive {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .value-difference.negative {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .value-difference.neutral {
+            background: rgba(136, 136, 160, 0.15);
+            color: var(--text-secondary);
+        }
+
+        /* Bottom section grid for value and message */
+        .bottom-fields {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #00c4d4 100%);
+            color: var(--bg-dark);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 30px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Hidden Django Select */
+        .django-select { display: none; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .trade-columns {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .trade-arrow-divider {
+                padding: 0;
+            }
+
+            .trade-arrow-circle {
+                transform: rotate(90deg);
+            }
+
+            .bottom-fields {
+                grid-template-columns: 1fr;
+            }
+
+            .value-summary-bar {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .value-divider {
+                flex-direction: row;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page-wrapper { padding: 24px 16px 60px; }
+            .section-body { padding: 16px; }
+            .form-actions {
+                flex-direction: column;
+                padding: 16px;
+            }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="page-wrapper">
+    <div class="container">
+        <!-- Page Header -->
+<br>
+<br>
+<br>
+        <header class="page-header" style="margin-top: 50px;">
+            <a href="{% url 'showcase:directedtradeoffers' %}" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Trade Offers
+            </a>
+            <h1 class="page-title">Trade With {{base_offer.user.username}}</h1>
+            <p class="page-subtitle">Select the cards you want to offer and the cards you're looking for</p>
+        </header>
+
+        <!-- Django Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-times-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
         </div>
+        {% endif %}
 
-        <form method="POST" class="form-content">
+        <!-- Trade Offer Form -->
+        <form method="POST" id="tradeForm">
             {% csrf_token %}
-            {% for field in form %}
-                <div class="form-field">
-                    {% if field.name == 'password1' %}
-                        <div class="password-label-wrapper">
-                            {{ field.label_tag }}
-                            <span class="info-icon" role="button" tabindex="0" aria-label="Password information">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                </svg>
+            <div class="form-layout">
 
-                                <div class="info-tooltip" role="tooltip">
-                                    <div class="tooltip-content">
-                                        Your password must be at least 8 characters long and include a mix of letters, numbers, and special characters.
+                <!-- Added value summary bar showing auto-calculated values -->
+                <div class="value-summary-bar">
+                    <div class="value-item">
+                        <span class="value-item-label">Your Offer Value</span>
+                        <span class="value-item-amount offer-value" id="offer_total_value">$0.00</span>
+                    </div>
+                    <div class="value-divider">
+                        <div class="value-divider-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <span class="value-difference neutral" id="value_difference">Even</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="value-item-label">Target Card Value</span>
+                        <span class="value-item-amount target-value" id="target_total_value">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Trade Selection Section - Two Column Layout -->
+                <div class="trade-columns">
+                    <!-- Left Column: Cards You're Offering -->
+                    <div class="trade-column">
+                        <div class="trade-column-header offering">
+                            <i class="fas fa-hand-holding"></i>
+                            <span class="trade-column-title">Your Offer</span>
+                            <!-- Added column value display -->
+                            <div class="trade-column-value" id="offered_column_value">
+                                <i class="fas fa-coins"></i>
+                                <span>$0.00</span>
+                            </div>
+                        </div>
+                        <div class="trade-column-body">
+                            <div class="searchable-select" data-field="offered_trade_items">
+                                <div class="search-input-wrapper">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text"
+                                           id="offered_search"
+                                           class="search-input"
+                                           placeholder="Search your collection..."
+                                           autocomplete="off">
+                                    <div class="dropdown-list" id="offered_dropdown">
+                                        {% for item in form.offered_trade_items.field.queryset %}
+                                        <!-- Added data-price attribute -->
+                                        <div class="dropdown-item"
+                                             data-value="{{ item.pk }}"
+                                             data-name="{{ item.title }}"
+                                             data-image="{{ item.image.url|default:'/placeholder.svg?height=50&width=36' }}"
+                                             data-rarity="{{ item.rarity|default:'Common' }}"
+                                             data-price="{{ item.price|default:'0' }}">
+                                            <img src="{{ item.image.url|default:'/placeholder.svg?height=50&width=36' }}" alt="{{ item.title }}">
+                                            <div class="dropdown-item-info">
+                                                <div class="dropdown-item-name">{{ item.title }}</div>
+                                                <div class="dropdown-item-meta">{{ item.rarity|default:'Common' }} &bull; <span class="dropdown-item-price">${{ item.price|default:'0.00' }}</span></div>
+                                            </div>
+                                        </div>
+                                        {% empty %}
+                                        <div class="dropdown-empty">
+                                            <i class="fas fa-inbox"></i>
+                                            <p>No cards in your collection</p>
+                                        </div>
+                                        {% endfor %}
                                     </div>
                                 </div>
-                            </span>
-                        </div>
-                        {{ field }}
-                    {% else %}
-                        {{ field.label_tag }}
-                        {{ field }}
-                    {% endif %}
-                    {% if field.help_text %}
-                        <span class="helptext">{{ field.help_text }}</span>
-                    {% endif %}
-                    {% if field.errors %}
-                        <ul class="errorlist">
-                            {% for error in field.errors %}
+                                <div class="selected-items empty" id="offered_selected">
+                                    <span class="empty-text">Click to select cards from your collection</span>
+                                </div>
+                                <!-- Hidden Django select -->
+                                <select name="offered_trade_items" id="id_offered_trade_items" class="django-select" multiple>
+                                    {% for item in form.offered_trade_items.field.queryset %}
+                                    <option value="{{ item.pk }}">{{ item.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% if form.offered_trade_items.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.offered_trade_items.errors %}
                                 <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Center: Trade Arrow -->
+                    <div class="trade-arrow-divider">
+                        <div class="trade-arrow-circle">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Card You Want -->
+                    <div class="trade-column">
+                        <div class="trade-column-header wanting">
+                            <i class="fas fa-crosshairs"></i>
+                            <span class="trade-column-title">Target Card(s)</span>
+                            <!-- Added column value display -->
+                            <div class="trade-column-value" id="wanted_column_value" style="background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.2); color: var(--accent-purple);">
+                                <i class="fas fa-coins" style="color: var(--accent-purple);"></i>
+                                <span>$0.00</span>
+                            </div>
+                        </div>
+                        <div class="trade-column-body">
+                            <div class="searchable-select" data-field="wanted_trade_items" data-single="true">
+                                <div class="search-input-wrapper">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text"
+                                           id="wanted_search"
+                                           class="search-input"
+                                           placeholder="Search available trade offers..."
+                                           autocomplete="off">
+                                    <div class="dropdown-list" id="wanted_dropdown">
+                                        {% for offer in trade_offers %}
+                                        <!-- Added data-price attribute -->
+                                        <div class="dropdown-item"
+                                             data-value="{{ offer.pk }}"
+                                             data-name="{{ offer.title }}"
+                                             data-image="{{ offer.image.url|default:'/placeholder.svg?height=50&width=36' }}"
+                                             data-owner="{{ offer.user.username }}"
+                                             data-price="{{ offer.estimated_trading_value|default:'0' }}">
+                                            <img src="{{ offer.image.url|default:'/placeholder.svg?height=50&width=36' }}" alt="{{ offer.title }}">
+                                            <div class="dropdown-item-info">
+                                                <div class="dropdown-item-name">{{ offer.title }}</div>
+                                                <div class="dropdown-item-meta">by {{ offer.user.username }} &bull; <span class="dropdown-item-price">${{ offer.estimated_trading_value|default:'0.00' }}</span></div>
+                                            </div>
+                                        </div>
+                                        {% empty %}
+                                        <div class="dropdown-empty">
+                                            <i class="fas fa-inbox"></i>
+                                            <p>No trade offers available</p>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="selected-items empty" id="wanted_selected">
+                                    <span class="empty-text">Click to select a card to trade for</span>
+                                </div>
+                                <!-- Hidden Django select -->
+                                <select name="wanted_trade_items" id="id_wanted_trade_items" class="django-select">
+                                    <option value="">---------</option>
+                                    {% for offer in trade_offers %}
+                                    <option value="{{ offer.pk }}">{{ offer.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% if form.wanted_trade_items.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.wanted_trade_items.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-            {% endfor %}
 
-            <button type="submit" class="submit-button">Submit</button>
+                <!-- Trade Preview -->
+                <div class="trade-preview">
+                    <div class="preview-label">
+                        <i class="fas fa-eye"></i>
+                        Trade Preview
+                    </div>
+                    <div class="preview-content">
+                        <div class="preview-side" id="preview_offered">
+                            <span class="preview-empty-text">Your cards</span>
+                        </div>
+                        <div class="preview-divider">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div class="preview-side" id="preview_wanted">
+                            <span class="preview-empty-text">{{ offer.user2 }}'s Cards</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Details Section -->
+                <div class="section-card">
+                    <div class="section-header gold">
+                        <i class="fas fa-file-alt"></i>
+                        <span class="section-title">Trade Details</span>
+                    </div>
+                    <div class="section-body">
+                        <div class="bottom-fields">
+                            <!-- Estimated Value - Now auto-calculated and read-only -->
+                            <div class="form-field">
+                                <label class="field-label" for="id_estimated_trading_value">
+                                    Estimated Value <span class="required">*</span>
+                                </label>
+                                <div class="value-input-wrapper">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number"
+                                           name="estimated_trading_value"
+                                           id="id_estimated_trading_value"
+                                           class="value-input auto-calculated"
+                                           step="0.01"
+                                           min="0"
+                                           placeholder="0.00"
+                                           value="0.00"
+                                           readonly
+                                           required>
+                                </div>
+                                <span class="helptext">Auto-calculated from your selected cards</span>
+                                {% if form.estimated_trading_value.errors %}
+                                <ul class="errorlist">
+                                    {% for error in form.estimated_trading_value.errors %}
+                                    <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </div>
+
+                            <!-- Message -->
+                            <div class="form-field">
+                                <label class="field-label" for="id_message">
+                                    Message to Trader
+                                </label>
+                                <textarea name="message"
+                                          id="id_message"
+                                          placeholder="Add a personal message to the trader (optional)..."
+                                          maxlength="2000" style="padding: 12px 14px;">{{ form.message.value|default:'' }}</textarea>
+                                {% if form.message.errors %}
+                                <ul class="errorlist">
+                                    {% for error in form.message.errors %}
+                                    <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <a href="{% url 'showcase:directedtradeoffers' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Submit Trade Offer
+                        </button>
+                    </div>
+                </div>
+            </div>
         </form>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const infoIcon = document.querySelector('.info-icon');
-                const tooltip = document.querySelector('.info-tooltip');
-                let isTooltipVisible = false;
-
-                // Ensure tooltip is hidden on page load
-                tooltip.classList.remove('visible');
-
-                function toggleTooltip(event) {
-                    event.stopPropagation(); // Prevent event from bubbling
-                    isTooltipVisible = !isTooltipVisible;
-                    tooltip.classList.toggle('visible');
-                }
-
-                // Show/hide tooltip on click or Enter key
-                infoIcon?.addEventListener('click', toggleTooltip);
-                infoIcon?.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        toggleTooltip(e);
-                    }
-                });
-
-                // Hide tooltip when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (infoIcon && !infoIcon.contains(e.target) && isTooltipVisible) {
-                        isTooltipVisible = false;
-                        tooltip.classList.remove('visible');
-                    }
-                });
-
-                // Hide tooltip when pressing Escape
-                document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape' && isTooltipVisible) {
-                        isTooltipVisible = false;
-                        tooltip.classList.remove('visible');
-                    }
-                });
-
-                // Add animation to form fields
-                const inputs = document.querySelectorAll('input');
-                inputs.forEach(input => {
-                    input.addEventListener('focus', function() {
-                        const label = this.parentElement.querySelector('label');
-                        if (label) label.style.color = 'var(--secondary)';
-                    });
-
-                    input.addEventListener('blur', function() {
-                        const label = this.parentElement.querySelector('label');
-                        if (label) label.style.color = 'var(--primary)';
-                    });
-                });
-
-                // Add subtle animation to the form on load
-                const formCard = document.querySelector('.forme-card');
-                formCard.style.opacity = '0';
-                formCard.style.transform = 'translateY(20px)';
-
-                setTimeout(() => {
-                    formCard.style.transition = 'all 0.6s ease-out';
-                    formCard.style.opacity = '1';
-                    formCard.style.transform = 'translateY(0)';
-                }, 100);
-            });
-        </script>
     </div>
 </div>
-{% endblock content %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let offeredTotalValue = 0;
+    let targetTotalValue = 0;
+
+    initSearchableSelect('offered');
+    initSearchableSelect('wanted');
+
+    function initSearchableSelect(prefix) {
+        const searchInput = document.getElementById(`${prefix}_search`);
+        const dropdown = document.getElementById(`${prefix}_dropdown`);
+        const selectedContainer = document.getElementById(`${prefix}_selected`);
+        const hiddenSelect = document.getElementById(`id_${prefix}_trade_items`);
+        const previewContainer = document.getElementById(`preview_${prefix}`);
+        const columnValueDisplay = document.getElementById(`${prefix}_column_value`);
+        const isSingle = prefix === 'wanted';
+
+        let selectedItems = [];
+
+        // Show dropdown on focus
+        searchInput.addEventListener('focus', function() {
+            dropdown.classList.add('active');
+        });
+
+        // Hide dropdown on outside click
+        document.addEventListener('click', function(e) {
+            if (!searchInput.closest('.searchable-select').contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Filter items on search
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const items = dropdown.querySelectorAll('.dropdown-item');
+
+            items.forEach(item => {
+                const name = item.dataset.name.toLowerCase();
+                const owner = item.dataset.owner ? item.dataset.owner.toLowerCase() : '';
+                const matches = name.includes(query) || owner.includes(query);
+                item.style.display = matches ? 'flex' : 'none';
+            });
+
+            dropdown.classList.add('active');
+        });
+
+        // Handle item selection
+        dropdown.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const value = this.dataset.value;
+                const name = this.dataset.name;
+                const image = this.dataset.image;
+                const price = parseFloat(this.dataset.price) || 0;
+
+                if (isSingle) {
+                    selectedItems = [{ value, name, image, price }];
+                    dropdown.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                } else {
+                    const index = selectedItems.findIndex(i => i.value === value);
+                    if (index > -1) {
+                        selectedItems.splice(index, 1);
+                        this.classList.remove('selected');
+                    } else {
+                        selectedItems.push({ value, name, image, price });
+                        this.classList.add('selected');
+                    }
+                }
+
+                updateSelectedDisplay();
+                updateHiddenSelect();
+                updatePreview();
+                updateColumnValue();
+                updateGlobalValues();
+                searchInput.value = '';
+
+                if (isSingle) {
+                    dropdown.classList.remove('active');
+                }
+            });
+        });
+
+        function updateSelectedDisplay() {
+            if (selectedItems.length === 0) {
+                selectedContainer.innerHTML = `<span class="empty-text">Click to select ${isSingle ? 'a card' : 'cards'}</span>`;
+                selectedContainer.classList.add('empty');
+            } else {
+                selectedContainer.classList.remove('empty');
+                selectedContainer.innerHTML = selectedItems.map(item => `
+                    <div class="selected-tag" data-value="${item.value}">
+                        <img src="${item.image}" alt="${item.name}">
+                        <span>${item.name}</span>
+                        <span class="tag-price">$${item.price.toFixed(2)}</span>
+                        <button type="button" class="remove-tag" data-value="${item.value}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `).join('');
+
+                selectedContainer.querySelectorAll('.remove-tag').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const value = this.dataset.value;
+                        selectedItems = selectedItems.filter(i => i.value !== value);
+                        dropdown.querySelector(`.dropdown-item[data-value="${value}"]`)?.classList.remove('selected');
+                        updateSelectedDisplay();
+                        updateHiddenSelect();
+                        updatePreview();
+                        updateColumnValue();
+                        updateGlobalValues();
+                    });
+                });
+            }
+        }
+
+        function updateHiddenSelect() {
+            if (isSingle) {
+                hiddenSelect.value = selectedItems.length ? selectedItems[0].value : '';
+            } else {
+                Array.from(hiddenSelect.options).forEach(option => {
+                    option.selected = selectedItems.some(i => i.value === option.value);
+                });
+            }
+        }
+
+        function updatePreview() {
+            if (selectedItems.length === 0) {
+                previewContainer.innerHTML = `<span class="preview-empty-text">${isSingle ? 'Their card' : 'Your cards'}</span>`;
+            } else {
+                previewContainer.innerHTML = selectedItems.map(item => `
+                    <div class="preview-item">
+                        <img src="${item.image}" alt="${item.name}">
+                    </div>
+                `).join('');
+            }
+        }
+
+        function updateColumnValue() {
+            const totalValue = selectedItems.reduce((sum, item) => sum + item.price, 0);
+            columnValueDisplay.querySelector('span').textContent = `$${totalValue.toFixed(2)}`;
+
+            // Update global tracking
+            if (prefix === 'offered') {
+                offeredTotalValue = totalValue;
+            } else {
+                targetTotalValue = totalValue;
+            }
+        }
+    }
+
+    function updateGlobalValues() {
+        // Update top summary bar
+        document.getElementById('offer_total_value').textContent = `$${offeredTotalValue.toFixed(2)}`;
+        document.getElementById('target_total_value').textContent = `$${targetTotalValue.toFixed(2)}`;
+
+        // Update estimated_trading_value field (auto-calculated from offered cards)
+        document.getElementById('id_estimated_trading_value').value = offeredTotalValue.toFixed(2);
+
+        // Update difference indicator
+        const differenceEl = document.getElementById('value_difference');
+        const diff = offeredTotalValue - targetTotalValue;
+
+        if (Math.abs(diff) < 0.01) {
+            differenceEl.textContent = 'Even';
+            differenceEl.className = 'value-difference neutral';
+        } else if (diff > 0) {
+            differenceEl.textContent = `+$${diff.toFixed(2)}`;
+            differenceEl.className = 'value-difference positive';
+        } else {
+            differenceEl.textContent = `-$${Math.abs(diff).toFixed(2)}`;
+            differenceEl.className = 'value-difference negative';
+        }
+    }
+});
+</script>
+</body>
+</html>
