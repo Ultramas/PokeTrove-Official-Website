@@ -58,6 +58,214 @@
     </script>
 
     <style>
+    /* ===== UNIFIED DESIGN SYSTEM ===== */
+
+    /* CSS Variables for Consistent Theming */
+    :root {
+        /* Primary Colors */
+        --primary: #00e5ff;
+        --primary-dark: #00b8d4;
+        --primary-light: #18ffff;
+        --primary-glow: rgba(0, 229, 255, 0.5);
+
+        /* Secondary Colors */
+        --secondary: #ff0055;
+        --secondary-dark: #c6004e;
+        --secondary-light: #ff4081;
+
+        /* Accent Colors */
+        --accent: #7c4dff;
+        --accent-dark: #651fff;
+        --accent-light: #b388ff;
+
+        /* Background Colors */
+        --bg-dark: #0a0e17;
+        --bg-darker: #050a14;
+        --bg-card: rgba(16, 23, 41, 0.85);
+        --bg-card-hover: rgba(20, 29, 49, 0.9);
+        --bg-glass: rgba(255, 255, 255, 0.05);
+
+        /* Text Colors */
+        --text-primary: #ffffff;
+        --text-secondary: rgba(255, 255, 255, 0.8);
+        --text-disabled: rgba(255, 255, 255, 0.5);
+        --text-hint: rgba(255, 255, 255, 0.3);
+
+        /* Status Colors */
+        --success: #00e676;
+        --warning: #ffea00;
+        --error: #ff1744;
+        --info: #2979ff;
+
+        /* Card Rarity Colors */
+        --gold: #ffd700;
+        --platinum: #e5e4e2;
+        --emerald: #50c878;
+        --diamond: #b9f2ff;
+
+        /* Border & Shadow */
+        --border-light: rgba(255, 255, 255, 0.1);
+        --border-medium: rgba(255, 255, 255, 0.2);
+        --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
+        --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.4);
+        --shadow-hard: 0 12px 40px rgba(0, 0, 0, 0.5);
+        --shadow-glow: 0 0 20px var(--primary-glow);
+
+        /* Transitions */
+        --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+        /* Spacing */
+        --spacing-xs: 0.5rem;
+        --spacing-sm: 0.3rem;
+        --spacing-md: 1.5rem;
+        --spacing-lg: 2rem;
+        --spacing-xl: 3rem;
+
+        /* Border Radius */
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+    }
+
+    /* ===== GLOBAL STYLES ===== */
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: "Rajdhani", sans-serif;
+        background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.6;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(45deg, var(--primary-dark), var(--primary));
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(45deg, var(--primary), var(--primary-light));
+    }
+
+    /* ===== UNIFIED CARD SYSTEM ===== */
+
+    .unified-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        backdrop-filter: blur(20px);
+        box-shadow: var(--shadow-medium);
+        transition: all var(--transition-medium);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .unified-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.05) 50%,
+            transparent 100%);
+        opacity: 0;
+        transition: opacity var(--transition-medium);
+        pointer-events: none;
+    }
+
+    .unified-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-hard), var(--shadow-glow);
+        border-color: var(--primary);
+    }
+
+    .unified-card:hover::before {
+        opacity: 1;
+    }
+
+    /* ===== UNIFIED BUTTON SYSTEM ===== */
+
+    .btn-unified {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-sm) var(--spacing-md);
+        border: none;
+        border-radius: var(--radius-md);
+        font-family: inherit;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all var(--transition-medium);
+        position: relative;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .btn-unified::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent);
+        transition: left var(--transition-slow);
+    }
+
+    .btn-unified:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary {
+        background: linear-gradient(45deg, var(--primary-dark), var(--primary));
+        color: var(--bg-dark);
+        box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 229, 255, 0.4);
+    }
+
+    .btn-secondary {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+        border: 1px solid var(--border-medium);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
 
     /* ===== LOADING OVERLAY ===== */
 
@@ -181,27 +389,43 @@
         flex-wrap: wrap;
         gap: var(--spacing-md);
     }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+
+    .logo-hex {
+        width: 50px;
+        height: 50px;
+        position: relative;
+    }
+
+    .logo-icon {
+        width: 100%;
+        height: 100%;
+        fill: var(--primary);
+        filter: drop-shadow(var(--shadow-glow));
+    }
+
+    .logo-text {
+        font-size: 1.8rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--accent-light) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        letter-spacing: 1px;
+    }
+
     .header-controls {
-      position: relative;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between; /* search on left, buttons on right */
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+        justify-content: flex-end;
     }
-
-    .dropheader {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      margin: 0;
-      text-align: center;
-    }
-
-    .header-bar {
-      margin-left: auto;
-      margin-right: 10px;
-    }
-
 
     .search-bar {
         display: flex;
@@ -243,7 +467,6 @@
         display: flex;
         align-items: center;
         gap: var(--spacing-sm);
-        padding-right: 15px;
     }
 
     .icon-button {
@@ -367,20 +590,6 @@
     pointer-events: none;
 }
 
-.video-background__image::before {
-    content: "";
-    position: absolute;
-    inset: 0;               /* top:0; right:0; bottom:0; left:0 */
-    pointer-events: none;
-    z-index: 1;             /* above the image, below your content */
-
-    /* Two linear-gradients, each confined to 2% width via background-size */
-    background:
-        linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0)) left top / 5% 100% no-repeat,
-        /* Right side: black → transparent across 2% */
-        linear-gradient(to left,  rgba(0,0,0,1), rgba(0,0,0,0)) right top / 5% 100% no-repeat;
-}
-
     /* ===== HOW TO PLAY BANNER ===== */
 
     .play-banner {
@@ -400,7 +609,7 @@
     .play-banner.collapsed {
         padding: 0;
         min-height: 100px;
-        /*height: 100px;*/
+        height: 100px;
     }
 
     .play-banner:not(.collapsed) {
@@ -410,7 +619,7 @@
 
     .play-banner::before {
         content: '';
-        /*position: absolute;*/
+        position: absolute;
         top: 0;
         left: 0;
         right: 0;
@@ -2212,6 +2421,10 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
             --spacing-xl: 2rem;
         }
 
+        .logo-text {
+            font-size: 1.5rem;
+        }
+
         .search-bar {
             display: none;
         }
@@ -2277,6 +2490,10 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
             padding: var(--spacing-sm);
             flex-direction: column;
             text-align: center;
+        }
+
+        .logo {
+            margin-bottom: var(--spacing-sm);
         }
 
         .play-banner:not(.collapsed) {
@@ -2470,27 +2687,14 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
         }
     }
 
-.hover-link {
-  display: block;                  /* ensure background spans full width */
-  width: 100%;
-  color: #03a4ed;
-  text-decoration: none;
-
-  /* remove duplicate padding declarations */
-  padding: 20px 50px;
-
-  /* left-edge fade: 0% -> transparent, 5% -> opaque, then solid */
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.14) 5%,
-    rgba(255, 255, 255, 0.14) 100%
-  );
-
-  /* optional: keep the fade within padding (avoid bleeding under borders) */
-  background-clip: padding-box;
-}
-
+  .hover-link {
+    color: #03a4ed;
+    background: rgba(255, 255, 255, 0.14);
+    width: 100%;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding: 20px;
+  }
   .hover-link:hover {
     color: #bf97ff;
   }
@@ -2610,25 +2814,20 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
         {% for BackgroundImage in Background %}
     {% if BackgroundImage.page == "index.html" %}
         {% if BackgroundImage.position == 1 %}
-<div class="video-background" style="display: flex; flex-direction: column;" id="premium">
+<div class="video-background" style="display: flex; flex-direction: column;">
      <!-- Background particle effect -->
+<a href="#" class="hover-link" style="text-decoration: none;">
+
     {% for event in Events %}
-        <a href="{{Event.get_profile_url}}"class="hover-link" style="text-decoration: none;">
-            <div class="event-item">
+  <div class="event-item">
     <h3 class="event-title">{{ event.name }}</h3>
-    <p style="text-shadow:
--1px -1px 0 black,
-1px -1px 0 black,
--1px  1px 0 black,
-1px  1px 0 black;
-}">{{ event.description }}</p>
+    <p>{{ event.description }}</p>
     <div
       class="countdown"
       data-start="{{ event.start_timestamp }}"
       data-duration="{{ event.duration_ms }}"
     >Loading…</div>
   </div>
-        </a>
 {% endfor %}
 
 
@@ -2664,11 +2863,11 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
         position: relative;">
               <div class="play-banner {% if user.is_authenticated %}collapsed{% endif %}" id="playBanner">
     <!-- Toggle button -->
- <!--<div class="play-banner-toggle">
+ <div class="play-banner-toggle">
         <button id="togglePlayBanner" aria-label="Toggle How To Play">
             <span class="toggle-icon"></span>
         </button>
-    </div>-->
+    </div>
 
     <!-- Decorative background cards -->
     <div class="bg-card card-1"></div>
@@ -2702,13 +2901,13 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
     </div>
 
     <!-- Banner header (always visible) -->
-    <!--<div class="play-banner-header">
+    <div class="play-banner-header">
         <h2 class="play-title" id="howtoplay">How To Play</h2>
         <div class="header-glow"></div>
-    </div>-->
+    </div>
 
     <!-- Collapsible content -->
-  <!--  <div class="play-banner-collapsible">
+    <div class="play-banner-collapsible">
         <div class="play-banner-content">
             <div class="play-steps">
                 <div class="play-step">
@@ -2767,16 +2966,13 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
             </div>
         </div>
     </div>
-</div>-->
-      <div class="header-controls" style="padding-top: 15px;" id="limited">
-              <h3 class="dropheader" style="margin-left: auto; margin-right: auto; position: absolute;">Limited Drops</h3>
-          <div class="header-bar">
-        <div class="search-bar" style="display: flex; flex-direction: row;">
+</div>
+      <div class="header-controls">
+        <div class="search-bar">
           <svg viewBox="0 0 24 24" class="search-icon">
             <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
           </svg>
           <input type="text" placeholder="Search collection...">
-        </div>
         </div>
 
         <div class="header-buttons">
@@ -2834,49 +3030,49 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
         </a>
         {% endfor %}
     </div>
-         </div></div>
+</div>
     </header>
         <!-- Featured Chests Section -->
         <div class="chest-container animate-fadeInUp" id="featuredgame">
             <h2 class="chest-header">
-                <span class="highlight-text">Featured</span> Products
+                <span class="highlight-text">Featured</span> Chests
             </h2>
             <div id="chestCollection" class="chest-collection animate-stagger">
-                {% for product in Products %}
-                {% if product.specialty == 'F' %}
+                {% for Game in FeaturedGame %}
                 <div class="prismatic-chest">
-                    <a href="{{ product.get_profile_url }}">
+                    <a href="{{ Game.get_profile_url2 }}">
                         <div class="chest-base">
                             <div class="chest-interior"></div>
                             <div class="light-beam"></div>
                         </div>
                         <div class="floating-card">
                             <div class="card-inner">
-                                <div class="card-image" style="background-image: url('{{ product.image.url }}');"></div>
+                                <div class="card-image" style="background-image: url('{{ Game.image.url }}');"></div>
                                 <div class="card-holographic-overlay"></div>
                                 <div class="card-shine"></div>
                             </div>
                         </div>
                         <div class="chest-info">
-                            <h3 class="chest-title">{{ product.title }}</h3>
+                            <h3 class="chest-title">{{ Game.name }}</h3>
                             <div class="price-tag">
-                                <!--<div class="diamond-icon">💎</div>-->
+                                <div class="diamond-icon">💎</div>
                                 {% if Game.discount_cost %}
-                                <div class="price-amount">${{ product.discount_price }}</div>
-                                <div class="original-price">${{ product.price }}</div>
+                                <div class="price-amount">{{ Game.discount_cost }}</div>
+                                <div class="original-price">{{ Game.cost }}</div>
                                 {% else %}
-                                <div class="price-amount">${{ product.price }}</div>
+                                <div class="price-amount">{{ Game.cost }}</div>
                                 {% endif %}
                             </div>
                             <div class="view-button">Check It Out!</div>
                         </div>
                     </a>
                 </div>
-                {% endif %}
                 {% endfor %}
             </div>
+        </div>
+
         <!-- Show More Button -->
-        <div class="buttons" style="z-index: 5000; margin-top: 85px;">
+        <div class="buttons">
             <button class="blob-btn" id="toggleGamesBtn">
                 See More
                 <span class="blob-btn__inner">
@@ -2898,17 +3094,14 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
                 </defs>
             </svg>
         </div>
-        </div>
-
 
         <!-- New Chests Section -->
         <div class="chest2-container animate-fadeInUp" id="newgame">
             <h2 class="chest-header">
-                <span class="highlight-text">New</span> Products
+                <span class="highlight-text">New</span> Chests
             </h2>
             <div class="chest-collection animate-stagger">
-                {% for product in Products %}
-                {% if product.specialty == 'N' %}
+                {% for Game in NewGame %}
                 <div class="prismatic-chest">
                     <a href="{{ Game.get_profile_url2 }}">
                         <div class="chest-base">
@@ -2917,7 +3110,7 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
                         </div>
                         <div class="floating-card">
                             <div class="card-inner">
-                                <div class="card-image" style="background-image: url('{{ product.image.url }}');"></div>
+                                <div class="card-image" style="background-image: url('{{ Game.image.url }}');"></div>
                                 <div class="card-holographic-overlay"></div>
                                 <div class="card-shine"></div>
                             </div>
@@ -2925,19 +3118,18 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
                         <div class="chest-info">
                             <h3 class="chest-title">{{ Game.name }}</h3>
                             <div class="price-tag">
-                                <!--<div class="diamond-icon">💎</div>-->
+                                <div class="diamond-icon">💎</div>
                                 {% if Game.discount_cost %}
-                                <div class="price-amount">${{ product.discount_price }}</div>
-                                <div class="original-price">${{ product.price }}</div>
+                                <div class="price-amount">{{ Game.discount_cost }}</div>
+                                <div class="original-price">{{ Game.cost }}</div>
                                 {% else %}
-                                <div class="price-amount">${{ product.price }}</div>
+                                <div class="price-amount">{{ Game.cost }}</div>
                                 {% endif %}
                             </div>
                             <div class="view-button">Check It Out!</div>
                         </div>
                     </a>
                 </div>
-                {% endif %}
                 {% endfor %}
             </div>
         </div>
@@ -2945,11 +3137,10 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
         <!-- Popular Chests Section -->
         <div class="chest3-container animate-fadeInUp" id="populargame">
             <h2 class="chest-header">
-                <span class="highlight-text">Popular</span> Products
+                <span class="highlight-text">Popular</span> Chests
             </h2>
             <div class="chest-collection animate-stagger">
-                {% for product in Products %}
-                {% if product.specialty == 'P' %}
+                {% for Game in PopularGame %}
                 <div class="prismatic-chest">
                     <a href="{{ Game.get_profile_url2 }}">
                         <div class="chest-base">
@@ -2958,7 +3149,7 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
                         </div>
                         <div class="floating-card">
                             <div class="card-inner">
-                                <div class="card-image" style="background-image: url('{{ product.image.url }}');"></div>
+                                <div class="card-image" style="background-image: url('{{ Game.image.url }}');"></div>
                                 <div class="card-holographic-overlay"></div>
                                 <div class="card-shine"></div>
                             </div>
@@ -2966,34 +3157,24 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
                         <div class="chest-info">
                             <h3 class="chest-title">{{ Game.name }}</h3>
                             <div class="price-tag">
-                                <!--<div class="diamond-icon">💎</div>-->
-                                {% if product.price %}
-                                {% if product.discount_price %}
-                                <div class="price-amount">${{ product.discount_price }}</div>
-                                <div class="original-price">${{ product.price }}</div>
+                                <div class="diamond-icon">💎</div>
+                                {% if Game.discount_cost %}
+                                <div class="price-amount">{{ Game.discount_cost }}</div>
+                                <div class="original-price">{{ Game.cost }}</div>
                                 {% else %}
-                                <div class="price-amount">${{ product.price }}</div>
-                                {% endif %}
-                                {% else %}
-                                {% if product.discount_currency_price %}
-                                <div class="price-amount">💎{{ product.discount_currency_price }}</div>
-                                <div class="original-price">💎{{ product.currency_price }}</div>
-                                {% else %}
-                                <div class="price-amount">💎{{ product.currency_price }}</div>
-                                {% endif %}
+                                <div class="price-amount">{{ Game.cost }}</div>
                                 {% endif %}
                             </div>
                             <div class="view-button">Check It Out!</div>
                         </div>
                     </a>
                 </div>
-                {% endif %}
                 {% endfor %}
             </div>
         </div>
 
         <!-- Ruby Refill Section -->
-        <!--<div class="marketplaceOuterContainer animate-fadeInUp">
+        <div class="marketplaceOuterContainer animate-fadeInUp">
             <div class="section-title">
                 <h3><span style="color: var(--accent-light);">Ruby</span> Refill</h3>
                 {% for BackgroundImage in TextFielde %}
@@ -3027,10 +3208,10 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
                 </a>
                 {% endfor %}
             </div>
-        </div>-->
+        </div>
 
         <!-- Marketplace Section -->
-        <div class="marketplaceOuterContainer animate-fadeInUp" id="marketgame" style="background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 240, 255, 0.1) 70%);">
+        <div class="marketplaceOuterContainer animate-fadeInUp" style="background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 240, 255, 0.1) 70%);">
             <div class="section-title">
                 <h3><span style="color: var(--accent-light);">PokeTrove</span> Marketplace</h3>
                 {% for BackgroundImage in TextFielde %}
@@ -3065,8 +3246,8 @@ rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));*/
                             <div class="gridCardPrice">💎{{ product.currency_price }}</div>
                             {% endif %}
                             {% endif %}
-                            <div class="cartBtn" style="width: 130px;">
-                                <h2 class="cartBtnFire" style="">Check It Out!</h2>
+                            <div class="cartBtn">
+                                <h2 class="cartBtnFire">Check It Out!</h2>
                             </div>
                         </div>
                     </div>
@@ -3635,11 +3816,11 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="testimonial-header">
             <h2 class="sectionedtitle">
                 <span class="title-icon">💬</span>
-                What Our Users Say
+                What Our Players Say
                 <span class="title-icon">⭐</span>
             </h2>
             <p class="section-subtitle">
-                Find out why thousands of collectors, vendors and sellers trust PokeTrove for card and product needs.
+                Discover why thousands of gamers trust PokeTrove for their ultimate gaming experience
             </p>
         </div>
 
@@ -3691,7 +3872,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                     <div class="client-details">
                                         <h4 class="client-name">{{ Feedback.username }}</h4>
-                                        <p class="client-title">Satisfied Customer</p>
+                                        <p class="client-title">Verified Player</p>
                                     </div>
                                 {% if Feedback.feedback_profile_url or Feedback.newprofile_profile_url %}
                                 </a>
@@ -4444,7 +4625,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="footer-box pages">
-                            <h2 class="widget-title">Quick Links</h2>
+                            <h2 class="widget-title">Links</h2>
                             <ul>
                                 <li><a href="{% url 'showcase:index' %}">Home</a></li>
                                 <li><a href="{% url 'showcase:about' %}">About</a>

@@ -7886,9 +7886,7 @@ class BlogBaseView(ListView):
 @login_required
 def ajax_update_amount(request):
     profile = request.user.profiledetails
-    rd_benefit = profile.tier.benefits \
-        .filter(benefit='RD', is_active=1) \
-        .first()
+    rd_benefit = profile.tier.benefits.filter(benefit='RD', is_active=1).first()
     rd_multiplier = rd_benefit.multiplier if rd_benefit else 1
 
     return JsonResponse({
